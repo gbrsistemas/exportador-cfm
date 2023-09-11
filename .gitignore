@@ -1,0 +1,10 @@
+target/
+*.iml
+.idea/
+.settings/
+vcs.xml
+.idea
+.project
+.classpath
+temp/
+/.tern-project
