@@ -1,6 +1,6 @@
-package br.com.gbrsistemas.projetotemplate.config.providers;
+package br.com.gbrsistemas.main.config.providers;
 
-import br.com.gbrsistemas.projetotemplate.util.Constants;
+import br.com.gbrsistemas.main.util.Constants;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;

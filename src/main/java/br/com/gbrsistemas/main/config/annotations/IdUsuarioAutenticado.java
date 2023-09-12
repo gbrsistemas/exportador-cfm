@@ -1,4 +1,4 @@
-package br.com.gbrsistemas.projetotemplate.config.annotations;
+package br.com.gbrsistemas.main.config.annotations;
 
 import javax.inject.Qualifier;
 import java.lang.annotation.Retention;

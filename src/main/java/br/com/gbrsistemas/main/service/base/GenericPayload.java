@@ -1,4 +1,4 @@
-package service.base;
+package br.com.gbrsistemas.main.service.base;
 
 import javax.ws.rs.BadRequestException;
 import java.util.HashMap;

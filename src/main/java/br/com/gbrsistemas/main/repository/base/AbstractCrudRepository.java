@@ -1,4 +1,4 @@
-package repository.base;
+package br.com.gbrsistemas.main.repository.base;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>br.com.gbrsistemas.crvirtual</groupId>
-    <artifactId>crv-template-backend</artifactId>
+    <artifactId>crv-exportador-cfm</artifactId>
     <version>0.0.1</version>
     <packaging>war</packaging>
 
@@ -254,9 +254,9 @@
         </repository>
     </distributionManagement>
     <scm>
-        <connection>scm:git:https://github.com/gbrsistemas/crv-template-backend.git</connection>
-        <url>http://github.com/gbrsistemas/crv-template-backend</url>
-        <developerConnection>scm:git:https://github.com/gbrsistemas/crv-template-backend.git</developerConnection>
+        <connection>scm:git:https://github.com/gbrsistemas/exportador-cfm.git</connection>
+        <url>http://github.com/gbrsistemas/exportador-cfm</url>
+        <developerConnection>scm:git:https://github.com/gbrsistemas/exportador-cfm.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 </project>

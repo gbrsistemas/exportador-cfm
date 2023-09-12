@@ -1,4 +1,4 @@
-package br.com.gbrsistemas.projetotemplate.config.filters;
+package br.com.gbrsistemas.main.config.filters;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;

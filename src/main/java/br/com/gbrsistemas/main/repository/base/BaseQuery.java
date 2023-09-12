@@ -1,4 +1,4 @@
-package repository.base;
+package br.com.gbrsistemas.main.repository.base;
 
 import javax.persistence.TemporalType;
 import javax.persistence.criteria.CriteriaBuilder;

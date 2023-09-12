@@ -1,4 +1,4 @@
-package repository.base;
+package br.com.gbrsistemas.main.repository.base;
 
 public class Or {
 

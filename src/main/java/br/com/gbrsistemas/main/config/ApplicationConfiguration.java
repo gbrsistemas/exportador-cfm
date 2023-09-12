@@ -1,4 +1,4 @@
-package br.com.gbrsistemas.projetotemplate.config;
+package br.com.gbrsistemas.main.config;
 
 import org.eclipse.microprofile.auth.LoginConfig;
 

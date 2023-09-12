@@ -1,4 +1,4 @@
-package br.com.gbrsistemas.projetotemplate.util;
+package br.com.gbrsistemas.main.util;
 
 public interface Constants {
     String JSON_UTF8 = "application/json;charset=utf-8";
