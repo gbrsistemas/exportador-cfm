@@ -1,6 +1,5 @@
 package br.com.gbrsistemas.main.service;
 
-
 import br.com.gbrsistemas.main.service.base.AbstractBaseService;
 import br.com.gbrsistemas.main.util.Constants;
 
