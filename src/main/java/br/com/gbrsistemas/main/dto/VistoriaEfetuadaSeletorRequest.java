@@ -24,6 +24,34 @@ public class VistoriaEfetuadaSeletorRequest {
     private String orderField;
     private String orderType;
     
+    public VistoriaEfetuadaSeletorRequest() {}
+    
+	public VistoriaEfetuadaSeletorRequest(Integer id, Integer idUsuarioTransmissao, Integer idTablet,
+			String numeroSerieTablet, Integer numeroDemanda, Integer anoDemanda, String ufDemanda,
+			Date dataInicialTransmissao, Date dataFinalTransmissao, Date dataInicialVistoria, Date dataFinalVistoria,
+			String nome, String nomeMunicipio, String nomeUsuarioTransmissao, Integer idRoteiro, Integer limite,
+			Integer pagina, String orderField, String orderType) {
+		this.id = id;
+		this.idUsuarioTransmissao = idUsuarioTransmissao;
+		this.idTablet = idTablet;
+		this.numeroSerieTablet = numeroSerieTablet;
+		this.numeroDemanda = numeroDemanda;
+		this.anoDemanda = anoDemanda;
+		this.ufDemanda = ufDemanda;
+		this.dataInicialTransmissao = dataInicialTransmissao;
+		this.dataFinalTransmissao = dataFinalTransmissao;
+		this.dataInicialVistoria = dataInicialVistoria;
+		this.dataFinalVistoria = dataFinalVistoria;
+		this.nome = nome;
+		this.nomeMunicipio = nomeMunicipio;
+		this.nomeUsuarioTransmissao = nomeUsuarioTransmissao;
+		this.idRoteiro = idRoteiro;
+		this.limite = limite;
+		this.pagina = pagina;
+		this.orderField = orderField;
+		this.orderType = orderType;
+	}
+
 	public Integer getId() {
 		return id;
 	}

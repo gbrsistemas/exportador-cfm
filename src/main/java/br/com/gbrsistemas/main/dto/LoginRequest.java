@@ -4,8 +4,12 @@ public class LoginRequest {
 	
 	private String login;
 	private String senha;
+	private String grant_type;
+	
+	public LoginRequest() {}
 	
 	public LoginRequest(String login, String senha) {
+		this.grant_type = "password";
 		this.login = login;
 		this.senha = senha;
 	}
