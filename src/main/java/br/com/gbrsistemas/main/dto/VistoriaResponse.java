@@ -1,13 +1,13 @@
 package br.com.gbrsistemas.main.dto;
 
 public class VistoriaResponse {
-	private int id;
-	private int idDemanda;
-	private int numeroDemanda;
-	private int anoDemanda;
+	private Integer id;
+	private Integer idDemanda;
+	private Integer numeroDemanda;
+	private Integer anoDemanda;
 	private String ufDemanda;
 	private String nomeUsuarioTransmissao;
-	private int idTablet;
+	private Integer idTablet;
 	private String numeroSerieTablet;
 	private String dataVistoria;
 	private String dataTransmissao;
@@ -17,8 +17,8 @@ public class VistoriaResponse {
 	
 	public VistoriaResponse() {}
 	
-	public VistoriaResponse(int id, int idDemanda, int numeroDemanda, int anoDemanda, String ufDemanda,
-			String nomeUsuarioTransmissao, int idTablet, String numeroSerieTablet, String dataVistoria,
+	public VistoriaResponse(Integer id, Integer idDemanda, Integer numeroDemanda, Integer anoDemanda, String ufDemanda,
+			String nomeUsuarioTransmissao, Integer idTablet, String numeroSerieTablet, String dataVistoria,
 			String dataTransmissao, String nomeMunicipio, String nome, String roteiro) {
 		this.id = id;
 		this.idDemanda = idDemanda;
@@ -35,28 +35,28 @@ public class VistoriaResponse {
 		this.roteiro = roteiro;
 	}
 	
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
-	public int getIdDemanda() {
+	public Integer getIdDemanda() {
 		return idDemanda;
 	}
-	public void setIdDemanda(int idDemanda) {
+	public void setIdDemanda(Integer idDemanda) {
 		this.idDemanda = idDemanda;
 	}
-	public int getNumeroDemanda() {
+	public Integer getNumeroDemanda() {
 		return numeroDemanda;
 	}
-	public void setNumeroDemanda(int numeroDemanda) {
+	public void setNumeroDemanda(Integer numeroDemanda) {
 		this.numeroDemanda = numeroDemanda;
 	}
-	public int getAnoDemanda() {
+	public Integer getAnoDemanda() {
 		return anoDemanda;
 	}
-	public void setAnoDemanda(int anoDemanda) {
+	public void setAnoDemanda(Integer anoDemanda) {
 		this.anoDemanda = anoDemanda;
 	}
 	public String getUfDemanda() {
@@ -71,10 +71,10 @@ public class VistoriaResponse {
 	public void setNomeUsuarioTransmissao(String nomeUsuarioTransmissao) {
 		this.nomeUsuarioTransmissao = nomeUsuarioTransmissao;
 	}
-	public int getIdTablet() {
+	public Integer getIdTablet() {
 		return idTablet;
 	}
-	public void setIdTablet(int idTablet) {
+	public void setIdTablet(Integer idTablet) {
 		this.idTablet = idTablet;
 	}
 	public String getNumeroSerieTablet() {

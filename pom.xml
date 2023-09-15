@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>br.com.gbrsistemas.crvirtual</groupId>
-    <artifactId>crv-exportador-cfm</artifactId>
+    <artifactId>importador-ged</artifactId>
     <version>0.0.1</version>
     <packaging>war</packaging>
 

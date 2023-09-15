@@ -14,6 +14,7 @@ import javax.ws.rs.core.Form;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaSeletorRequest;
+import br.com.gbrsistemas.main.dto.AnexoDTO;
 import br.com.gbrsistemas.main.dto.AnexoResponse;
 import br.com.gbrsistemas.main.dto.AnexoSeletorRequest;
 import br.com.gbrsistemas.main.dto.DemandasRequest;
@@ -63,7 +64,7 @@ public class ApiController {
         }
     }
 
-    public VistoriaEfetuadaResponse postVistorias(VistoriaEfetuadaSeletorRequest vistoriaEfetuadaSeletorRequest) throws JsonProcessingException {
+    public VistoriaEfetuadaResponse listarVistoria(VistoriaEfetuadaSeletorRequest vistoriaEfetuadaSeletorRequest) throws JsonProcessingException {
     	    	
         Client client = ClientBuilder.newClient();
 
@@ -88,7 +89,7 @@ public class ApiController {
         }
     }
     
-    public String getAnexo(Integer id) {
+    public String baixarAnexo(Integer id) {
     	
         Client client = ClientBuilder.newClient();
 
@@ -109,7 +110,7 @@ public class ApiController {
         }
     }
 
-	public List<AnexoResponse> postAnexo(AnexoSeletorRequest anexoSeletorRequest) throws JsonProcessingException {
+	public List<AnexoDTO> postAnexo(AnexoSeletorRequest anexoSeletorRequest) throws JsonProcessingException {
         Client client = ClientBuilder.newClient();
 
         WebTarget target = client.target(this.API + "/crvirtual-demandas/anexo/dto/");
@@ -125,8 +126,11 @@ public class ApiController {
             String responseBody = response.readEntity(String.class);
             
             try {
-                List<AnexoResponse> vistorias = JsonConverter.jsonToList(responseBody, AnexoResponse.class);
-                return vistorias;
+            	AnexoResponse anexoResponse = JsonConverter.jsonToObject(responseBody, AnexoResponse.class);
+
+                List<AnexoDTO> anexos = anexoResponse.getItens();
+
+                return anexos;
             } catch (JsonProcessingException e) {
                 System.err.println("Erro ao processar o JSON de resposta: " + e.getMessage());
                 return null;

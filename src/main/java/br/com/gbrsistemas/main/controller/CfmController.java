@@ -1,102 +1,89 @@
 package br.com.gbrsistemas.main.controller;
 
-import br.com.gbrsistemas.main.util.JwtUtil;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaSeletorRequest;
+import br.com.gbrsistemas.main.dto.VistoriaResponse;
 import br.com.gbrsistemas.main.dto.AnexoResponse;
 import br.com.gbrsistemas.main.dto.AnexoSeletorRequest;
-import br.com.gbrsistemas.main.dto.DemandaResponse;
+import br.com.gbrsistemas.main.dto.AnexoDTO;
 
 import java.util.List;
+import java.util.ArrayList;
 
-import javax.inject.Inject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.com.gbrsistemas.main.dto.LoginRequest;
-import br.com.gbrsistemas.main.dto.LoginRequestWrapper;
+import br.com.gbrsistemas.main.dto.VistoriaEfetuadaRequest;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaResponse;
 import br.com.gbrsistemas.main.util.AccessTokenInvalidoException;
-import br.com.gbrsistemas.main.dto.DemandasRequest;
 
 public class CfmController {
 	
 	private String accesToken;
-	
 	private ApiController apiController;
-	
-	private JwtUtil jwtUtil;
 
+	private Integer idDemanda;
+	private Integer anoDemanda;
 	
 	public CfmController () {
 		this.apiController = new ApiController(null);
-		this.jwtUtil = new JwtUtil();
 	}
 	
-	public void iniciaFluxo(LoginRequestWrapper loginRequestWrapper) throws AccessTokenInvalidoException, JsonProcessingException {
-		this.postLogin(loginRequestWrapper.getLoginRequest().getLogin(), loginRequestWrapper.getLoginRequest().getSenha());
-		VistoriaEfetuadaResponse vistoriaEfetuadaResponse = this.postVistorias(loginRequestWrapper.getVistoriaEfetuadaSeletorRequest());
+	public VistoriaResponse listarVistoria(VistoriaEfetuadaRequest vistoriaEfetuadaRequest) throws JsonProcessingException, AccessTokenInvalidoException {
+		this.login();
 		
-		//TODO
-		//VERIFICAR DATAS
-		AnexoSeletorRequest anexoSeletorRequest = new AnexoSeletorRequest();
+		VistoriaEfetuadaSeletorRequest vistoriaEfetuadaSeletorRequest = new VistoriaEfetuadaSeletorRequest();
+		vistoriaEfetuadaSeletorRequest.setNumeroDemanda(vistoriaEfetuadaRequest.getAnoDemanda());
+		vistoriaEfetuadaSeletorRequest.setAnoDemanda(vistoriaEfetuadaRequest.getAnoDemanda());
+		vistoriaEfetuadaSeletorRequest.setUfDemanda(vistoriaEfetuadaRequest.getUfDemanda());
+		vistoriaEfetuadaSeletorRequest.setDataInicialTransmissao(vistoriaEfetuadaRequest.getDataInicialTransmissao());
+		vistoriaEfetuadaSeletorRequest.setDataFinalTransmissao(vistoriaEfetuadaRequest.getDataFinalTransmissao());
 
-		
-		List<DemandaResponse> demandas = this.postDemanda(
-				loginRequestWrapper.getVistoriaEfetuadaSeletorRequest().getNumeroDemanda(),
-				loginRequestWrapper.getVistoriaEfetuadaSeletorRequest().getAnoDemanda()
-						);
-		
-		if (demandas != null) {
-		    for (DemandaResponse demanda : demandas) {
-		    	anexoSeletorRequest.setIdDemanda(demanda.getItens().get(0).getId());
-		    }
-		}
-		
-		List<AnexoResponse> anexoResponse = this.postAnexo(anexoSeletorRequest);
-		
-		if (anexoResponse != null) {
-		    for (AnexoResponse anexo : anexoResponse) {
-				this.getAnexo(anexo.getId());
-		    }
-		}
+		VistoriaEfetuadaResponse vistoriaEfetuadaResponse =  this.apiController.listarVistoria(vistoriaEfetuadaSeletorRequest);
+
+		if(vistoriaEfetuadaResponse.getItens().get(0) != null) {
+			this.idDemanda = vistoriaEfetuadaResponse.getItens().get(0).getIdDemanda();
+			this.anoDemanda = vistoriaEfetuadaResponse.getItens().get(0).getAnoDemanda();
+			
+			
+			return vistoriaEfetuadaResponse.getItens().get(0);
+			
+		}	
+		return null;
 	}
 	
-	private List<AnexoResponse> postAnexo(AnexoSeletorRequest anexoSeletorRequest) throws JsonProcessingException, AccessTokenInvalidoException {
-		this.verificaJwt();
+	public List<String> baixarAnexo() throws AccessTokenInvalidoException, JsonProcessingException {
+		this.login();
 		
-		return this.apiController.postAnexo(anexoSeletorRequest);	
+		this.idDemanda = 500637;
+		this.anoDemanda = 2023;
+		
+		List<String> listaAnexo = new ArrayList<>();
+		
+		if (this.anoDemanda != null || this.idDemanda != null ) {
+			AnexoSeletorRequest anexoSeletorRequest = new AnexoSeletorRequest();
+			anexoSeletorRequest.setIdDemanda(this.idDemanda);
+			//anexoSeletorRequest.setAno(this.anoDemanda);
+			
+			List<AnexoDTO> anexoResponse = this.apiController.postAnexo(anexoSeletorRequest);
+			
+			if (anexoResponse != null) {
+			    for (AnexoDTO anexo : anexoResponse) {
+			    	listaAnexo.add(this.apiController.baixarAnexo(anexo.getId()));
+			    }
+			}
+			
+			return listaAnexo;
+		}
+
+		return null;
 	}
 
-	public void postLogin (String login, String senha) throws JsonProcessingException {
-		LoginRequest loginRequest = new LoginRequest(login, senha);
+	public void login() throws JsonProcessingException {
+		LoginRequest loginRequest = new LoginRequest("administradorfederal@teste.com.br", "@Cfm123");
 		
 		this.accesToken = this.apiController.postLogin(loginRequest);
 		this.apiController = new ApiController(this.accesToken);
-	}
-	
-	public VistoriaEfetuadaResponse postVistorias (VistoriaEfetuadaSeletorRequest vistoriaEfetuadaSeletorRequest) throws AccessTokenInvalidoException, JsonProcessingException {
-		this.verificaJwt();
-		
-		return this.apiController.postVistorias(vistoriaEfetuadaSeletorRequest);
-	}
-	
-	public  List<DemandaResponse> postDemanda (Integer numeroDemanda, Integer anoDemanda) throws AccessTokenInvalidoException, JsonProcessingException {
-		this.verificaJwt();
-		
-		DemandasRequest demandaRequest = new DemandasRequest();
-		demandaRequest.setNumero(numeroDemanda);
-		demandaRequest.setAno(anoDemanda);
-		
-		return this.apiController.postDemanda(demandaRequest);
-	}
-	
-	public void getAnexo (Integer id) throws AccessTokenInvalidoException {
-		this.verificaJwt();
-		this.apiController.getAnexo(id);
-	}
-	
-	public void verificaJwt() throws AccessTokenInvalidoException {
-		//this.jwtUtil.verificaAccessToken(this.accesToken);
 	}
 
 }
