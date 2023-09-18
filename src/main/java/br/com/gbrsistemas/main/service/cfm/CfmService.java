@@ -12,7 +12,6 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.com.gbrsistemas.main.controller.CfmController;
-import br.com.gbrsistemas.main.dto.IrregularidadeSeletorDTO;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaDTO;
 import br.com.gbrsistemas.main.util.AccessTokenInvalidoException;
 import br.com.gbrsistemas.main.util.Constants;
