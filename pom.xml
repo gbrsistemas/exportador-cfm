@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>br.com.gbrsistemas.crvirtual</groupId>
-    <artifactId>importador-ged</artifactId>
+    <artifactId>integrador-ged</artifactId>
     <version>0.0.1</version>
     <packaging>war</packaging>
 
