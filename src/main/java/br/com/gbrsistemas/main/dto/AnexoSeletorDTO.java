@@ -2,7 +2,7 @@ package br.com.gbrsistemas.main.dto;
 
 import java.util.List;
 
-public class AnexoSeletorRequest {
+public class AnexoSeletorDTO {
 
     private Integer id;
     private String s3;

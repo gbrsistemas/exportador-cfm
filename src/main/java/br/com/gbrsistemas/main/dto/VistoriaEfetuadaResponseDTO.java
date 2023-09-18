@@ -2,15 +2,15 @@ package br.com.gbrsistemas.main.dto;
 
 import java.util.List;
 
-public class VistoriaEfetuadaResponse {
-    private List<VistoriaResponse> itens;
+public class VistoriaEfetuadaResponseDTO {
+    private List<VistoriaResponseDTO> itens;
     private int total;
 
-    public List<VistoriaResponse> getItens() {
+    public List<VistoriaResponseDTO> getItens() {
         return itens;
     }
 
-    public void setItens(List<VistoriaResponse> itens) {
+    public void setItens(List<VistoriaResponseDTO> itens) {
         this.itens = itens;
     }
 

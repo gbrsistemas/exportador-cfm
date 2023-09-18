@@ -10,13 +10,15 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import br.com.gbrsistemas.main.dto.AnexoSeletorRequest;
-import br.com.gbrsistemas.main.dto.ItemAnexo;
-import br.com.gbrsistemas.main.dto.LoginRequest;
-import br.com.gbrsistemas.main.dto.VistoriaEfetuadaRequest;
-import br.com.gbrsistemas.main.dto.VistoriaEfetuadaResponse;
-import br.com.gbrsistemas.main.dto.VistoriaEfetuadaSeletorRequest;
-import br.com.gbrsistemas.main.dto.VistoriaResponse;
+import br.com.gbrsistemas.main.dto.AnexoSeletorDTO;
+import br.com.gbrsistemas.main.dto.IrregularidadeSeletorDTO;
+import br.com.gbrsistemas.main.dto.ItemAnexoDTO;
+import br.com.gbrsistemas.main.dto.ItemVistoriaDTO;
+import br.com.gbrsistemas.main.dto.LoginDTO;
+import br.com.gbrsistemas.main.dto.VistoriaEfetuadaDTO;
+import br.com.gbrsistemas.main.dto.VistoriaEfetuadaResponseDTO;
+import br.com.gbrsistemas.main.dto.VistoriaEfetuadaSeletorDTO;
+import br.com.gbrsistemas.main.dto.VistoriaResponseDTO;
 import br.com.gbrsistemas.main.util.AccessTokenInvalidoException;
 
 @Stateless
@@ -38,17 +40,17 @@ public class CfmController {
     @ConfigProperty(name = "cfm.password")
     private String password;
 	
-	public VistoriaResponse listarVistoria(VistoriaEfetuadaRequest vistoriaEfetuadaRequest) throws JsonProcessingException, AccessTokenInvalidoException {
+	public VistoriaResponseDTO listarVistoria(VistoriaEfetuadaDTO vistoriaEfetuadaRequest) throws JsonProcessingException, AccessTokenInvalidoException {
 		this.login();
 		
-		VistoriaEfetuadaSeletorRequest vistoriaEfetuadaSeletorRequest = new VistoriaEfetuadaSeletorRequest();
+		VistoriaEfetuadaSeletorDTO vistoriaEfetuadaSeletorRequest = new VistoriaEfetuadaSeletorDTO();
 		vistoriaEfetuadaSeletorRequest.setNumeroDemanda(vistoriaEfetuadaRequest.getAnoDemanda());
 		vistoriaEfetuadaSeletorRequest.setAnoDemanda(vistoriaEfetuadaRequest.getAnoDemanda());
 		vistoriaEfetuadaSeletorRequest.setUfDemanda(vistoriaEfetuadaRequest.getUfDemanda());
 		vistoriaEfetuadaSeletorRequest.setDataInicialTransmissao(vistoriaEfetuadaRequest.getDataInicialTransmissao());
 		vistoriaEfetuadaSeletorRequest.setDataFinalTransmissao(vistoriaEfetuadaRequest.getDataFinalTransmissao());
 
-		VistoriaEfetuadaResponse vistoriaEfetuadaResponse =  this.apiController.listarVistoria(vistoriaEfetuadaSeletorRequest, this.accesToken);
+		VistoriaEfetuadaResponseDTO vistoriaEfetuadaResponse =  this.apiController.listarVistoria(vistoriaEfetuadaSeletorRequest, this.accesToken);
 
 		if(vistoriaEfetuadaResponse != null && vistoriaEfetuadaResponse.getItens() != null && 
 		        !vistoriaEfetuadaResponse.getItens().isEmpty() && vistoriaEfetuadaResponse.getItens().get(0) != null) {
@@ -65,18 +67,14 @@ public class CfmController {
 	public Response baixarAnexo() throws AccessTokenInvalidoException, JsonProcessingException {
 		this.login();
 		
-		this.idDemanda = 500637;
-		this.anoDemanda = 2023;
-		
 		if (this.anoDemanda != null || this.idDemanda != null ) {
-			AnexoSeletorRequest anexoSeletorRequest = new AnexoSeletorRequest();
+			AnexoSeletorDTO anexoSeletorRequest = new AnexoSeletorDTO();
 			anexoSeletorRequest.setIdDemanda(this.idDemanda);
 			
-			List<ItemAnexo> anexoResponse = this.apiController.postAnexo(anexoSeletorRequest, this.accesToken);
+			List<ItemAnexoDTO> anexoResponse = this.apiController.postAnexo(anexoSeletorRequest, this.accesToken);
 			
 			if (anexoResponse != null) {
-			    for (ItemAnexo anexo : anexoResponse) {
-			    	//listaAnexo.add(this.apiController.baixarAnexo(anexo.getId()));
+			    for (ItemAnexoDTO anexo : anexoResponse) {
 			    	return this.apiController.baixarAnexo(anexo.getId(), this.accesToken);
 			    }
 			}
@@ -84,9 +82,15 @@ public class CfmController {
 		
 		return null;
 	}
+	
+	public List<ItemVistoriaDTO> listaIrregularidades(IrregularidadeSeletorDTO irregularidadeSeletor) throws AccessTokenInvalidoException, JsonProcessingException {
+		this.login();
+		
+		return this.apiController.postIrregularidade(irregularidadeSeletor, accesToken);
+	}
 
 	public void login() throws JsonProcessingException {	    
-		LoginRequest loginRequest = new LoginRequest(this.username, this.password);
+		LoginDTO loginRequest = new LoginDTO(this.username, this.password);
 		
 		this.accesToken = this.apiController.postLogin(loginRequest);
 	}

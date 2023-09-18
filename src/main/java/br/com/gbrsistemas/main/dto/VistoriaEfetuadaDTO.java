@@ -2,7 +2,7 @@ package br.com.gbrsistemas.main.dto;
 
 import java.util.Date;
 
-public class VistoriaEfetuadaRequest {
+public class VistoriaEfetuadaDTO {
 	
     private Integer numeroDemanda;
     private Integer anoDemanda;
@@ -10,10 +10,10 @@ public class VistoriaEfetuadaRequest {
     private Date dataInicialTransmissao;    
     private Date dataFinalTransmissao;   
     
-	public VistoriaEfetuadaRequest() {
+	public VistoriaEfetuadaDTO() {
 	}
     
-	public VistoriaEfetuadaRequest(Integer numeroDemanda, Integer anoDemanda, String ufDemanda,
+	public VistoriaEfetuadaDTO(Integer numeroDemanda, Integer anoDemanda, String ufDemanda,
 			Date dataInicialTransmissao, Date dataFinalTransmissao) {
 		this.numeroDemanda = numeroDemanda;
 		this.anoDemanda = anoDemanda;

@@ -1,14 +1,14 @@
 package br.com.gbrsistemas.main.dto;
 
-public class LoginRequest {
+public class LoginDTO {
 	
 	private String login;
 	private String senha;
 	private String grant_type;
 	
-	public LoginRequest() {}
+	public LoginDTO() {}
 	
-	public LoginRequest(String login, String senha) {
+	public LoginDTO(String login, String senha) {
 		this.grant_type = "password";
 		this.login = login;
 		this.senha = senha;

@@ -2,7 +2,7 @@ package br.com.gbrsistemas.main.dto;
 
 import java.util.Date;
 
-public class VistoriaEfetuadaSeletorRequest {
+public class VistoriaEfetuadaSeletorDTO {
 
     private Integer id;
     private Integer idUsuarioTransmissao;
@@ -24,9 +24,9 @@ public class VistoriaEfetuadaSeletorRequest {
     private String orderField;
     private String orderType;
     
-    public VistoriaEfetuadaSeletorRequest() {}
+    public VistoriaEfetuadaSeletorDTO() {}
     
-	public VistoriaEfetuadaSeletorRequest(Integer id, Integer idUsuarioTransmissao, Integer idTablet,
+	public VistoriaEfetuadaSeletorDTO(Integer id, Integer idUsuarioTransmissao, Integer idTablet,
 			String numeroSerieTablet, Integer numeroDemanda, Integer anoDemanda, String ufDemanda,
 			Date dataInicialTransmissao, Date dataFinalTransmissao, Date dataInicialVistoria, Date dataFinalVistoria,
 			String nome, String nomeMunicipio, String nomeUsuarioTransmissao, Integer idRoteiro, Integer limite,

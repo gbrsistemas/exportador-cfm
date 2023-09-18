@@ -1,6 +1,6 @@
 package br.com.gbrsistemas.main.dto;
 
-public class ItemAnexo {
+public class ItemAnexoDTO {
 	
 	private Integer id;
 	private String s3;

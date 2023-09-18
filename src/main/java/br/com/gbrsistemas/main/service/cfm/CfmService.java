@@ -12,7 +12,8 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.com.gbrsistemas.main.controller.CfmController;
-import br.com.gbrsistemas.main.dto.VistoriaEfetuadaRequest;
+import br.com.gbrsistemas.main.dto.IrregularidadeSeletorDTO;
+import br.com.gbrsistemas.main.dto.VistoriaEfetuadaDTO;
 import br.com.gbrsistemas.main.util.AccessTokenInvalidoException;
 import br.com.gbrsistemas.main.util.Constants;
 
@@ -28,7 +29,7 @@ public class CfmService {
     @Path("/vistoria-realizada")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response vistoriaRealizada(VistoriaEfetuadaRequest vistoriaEfetuadaRequest) throws AccessTokenInvalidoException, JsonProcessingException {
+    public Response vistoriaRealizada(VistoriaEfetuadaDTO vistoriaEfetuadaRequest) throws AccessTokenInvalidoException, JsonProcessingException {
     	return Response.ok(this.cfmController.listarVistoria(vistoriaEfetuadaRequest)).build(); 
     }
 	
@@ -37,6 +38,14 @@ public class CfmService {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response baixarAnexo() throws AccessTokenInvalidoException, JsonProcessingException {
     	return this.cfmController.baixarAnexo();
+    }
+	
+	@POST
+    @Path("/irregularidades")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response listaIrregularidades(IrregularidadeSeletorDTO irregularidadeSeletor) throws AccessTokenInvalidoException, JsonProcessingException {
+    	return Response.ok(this.cfmController.listaIrregularidades(irregularidadeSeletor)).build(); 
     }
 	
 }

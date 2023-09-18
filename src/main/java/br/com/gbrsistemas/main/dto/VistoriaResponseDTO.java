@@ -1,6 +1,6 @@
 package br.com.gbrsistemas.main.dto;
 
-public class VistoriaResponse {
+public class VistoriaResponseDTO {
 	private Integer id;
 	private Integer idDemanda;
 	private Integer numeroDemanda;
@@ -15,9 +15,9 @@ public class VistoriaResponse {
 	private String nome;
 	private String roteiro;
 	
-	public VistoriaResponse() {}
+	public VistoriaResponseDTO() {}
 	
-	public VistoriaResponse(Integer id, Integer idDemanda, Integer numeroDemanda, Integer anoDemanda, String ufDemanda,
+	public VistoriaResponseDTO(Integer id, Integer idDemanda, Integer numeroDemanda, Integer anoDemanda, String ufDemanda,
 			String nomeUsuarioTransmissao, Integer idTablet, String numeroSerieTablet, String dataVistoria,
 			String dataTransmissao, String nomeMunicipio, String nome, String roteiro) {
 		this.id = id;

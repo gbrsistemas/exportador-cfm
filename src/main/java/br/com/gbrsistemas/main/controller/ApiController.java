@@ -20,12 +20,17 @@ import javax.ws.rs.core.Form;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import br.com.gbrsistemas.main.dto.VistoriaEfetuadaSeletorRequest;
-import br.com.gbrsistemas.main.dto.ItemAnexo;
-import br.com.gbrsistemas.main.dto.AnexoResponse;
-import br.com.gbrsistemas.main.dto.AnexoSeletorRequest;
-import br.com.gbrsistemas.main.dto.LoginRequest;
-import br.com.gbrsistemas.main.dto.VistoriaEfetuadaResponse;
+import br.com.gbrsistemas.main.dto.VistoriaEfetuadaSeletorDTO;
+import br.com.gbrsistemas.main.dto.ItemAnexoDTO;
+import br.com.gbrsistemas.main.dto.AnexoDTO;
+import br.com.gbrsistemas.main.dto.VistoriaDTO;
+import br.com.gbrsistemas.main.dto.ItemVistoriaDTO;
+import br.com.gbrsistemas.main.dto.AnexoSeletorDTO;
+import br.com.gbrsistemas.main.dto.IrregularidadeSeletorDTO;
+import br.com.gbrsistemas.main.dto.LoginDTO;
+import br.com.gbrsistemas.main.dto.IrregularidadesSeletorDemandasDTO;
+import br.com.gbrsistemas.main.dto.VistoriaEfetuadaResponseDTO;
+
 import br.com.gbrsistemas.main.util.JsonConverter;
 
 @Stateless
@@ -39,7 +44,7 @@ public class ApiController {
     @ConfigProperty(name = "cfm.api")
     private String api;
        
-    public String postLogin(LoginRequest loginRequest) throws JsonProcessingException {
+    public String postLogin(LoginDTO loginRequest) throws JsonProcessingException {
     	    	
     	Client client = ClientBuilder.newClient();
     	WebTarget target = client.target(this.apiLogin + "/oauth2/token");
@@ -70,7 +75,7 @@ public class ApiController {
         }
     }
 
-    public VistoriaEfetuadaResponse listarVistoria(VistoriaEfetuadaSeletorRequest vistoriaEfetuadaSeletorRequest, String token) throws JsonProcessingException {
+    public VistoriaEfetuadaResponseDTO listarVistoria(VistoriaEfetuadaSeletorDTO vistoriaEfetuadaSeletorRequest, String token) throws JsonProcessingException {
     	    	
         Client client = null;
         try {
@@ -86,7 +91,7 @@ public class ApiController {
                     .post(Entity.json(requestBody));
                             
             if (response.getStatus() == 200) {
-                VistoriaEfetuadaResponse vistoriaResponse = JsonConverter.jsonToObject(response.readEntity(String.class), VistoriaEfetuadaResponse.class);
+                VistoriaEfetuadaResponseDTO vistoriaResponse = JsonConverter.jsonToObject(response.readEntity(String.class), VistoriaEfetuadaResponseDTO.class);
                 
                 return vistoriaResponse;
             } else {
@@ -119,7 +124,7 @@ public class ApiController {
         }
     }
 
-	public List<ItemAnexo> postAnexo(AnexoSeletorRequest anexoSeletorRequest, String token) throws JsonProcessingException {
+	public List<ItemAnexoDTO> postAnexo(AnexoSeletorDTO anexoSeletorRequest, String token) throws JsonProcessingException {
         Client client = ClientBuilder.newClient();
 
         WebTarget target = client.target(this.api + "/crvirtual-demandas/anexo/dto/");
@@ -135,15 +140,42 @@ public class ApiController {
             String responseBody = response.readEntity(String.class);
             
             try {
-            	AnexoResponse anexoResponse = JsonConverter.jsonToObject(responseBody, AnexoResponse.class);
+            	AnexoDTO anexoResponse = JsonConverter.jsonToObject(responseBody, AnexoDTO.class);
 
-                List<ItemAnexo> anexos = anexoResponse.getItens();
+                List<ItemAnexoDTO> anexos = anexoResponse.getItens();
 
                 return anexos;
             } catch (JsonProcessingException e) {
                 System.err.println("Erro ao processar o JSON de resposta: " + e.getMessage());
                 return null;
             }
+        } else {
+            System.err.println("Erro na solicitação. Código de resposta: " + response.getStatus());
+            return null;
+        }
+	}
+	
+	public List<ItemVistoriaDTO> postIrregularidade(IrregularidadeSeletorDTO irregularidadSeletor, String token) throws JsonProcessingException {
+        Client client = ClientBuilder.newClient();
+        IrregularidadesSeletorDemandasDTO irregularidadeSeletorDemandas = new IrregularidadesSeletorDemandasDTO();
+        irregularidadeSeletorDemandas.setIdDemanda(irregularidadSeletor.getIdDemanda());
+        
+        WebTarget target = client.target(this.api + "/crvirtual-demandas/irregularidade/dto");
+
+        String requestBody = JsonConverter.objectToJson(irregularidadeSeletorDemandas);
+
+        Response response = target
+                .request(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .post(Entity.json(requestBody));
+
+        if (response.getStatus() == 200) {
+            String responseBody = response.readEntity(String.class);
+
+        	VistoriaDTO itemVistoriaDTO = JsonConverter.jsonToObject(responseBody, VistoriaDTO.class);
+            List<ItemVistoriaDTO> anexos = itemVistoriaDTO.getItens();
+            
+            return anexos;
         } else {
             System.err.println("Erro na solicitação. Código de resposta: " + response.getStatus());
             return null;
