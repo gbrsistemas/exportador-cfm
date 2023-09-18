@@ -11,7 +11,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.com.gbrsistemas.main.dto.AnexoSeletorDTO;
-import br.com.gbrsistemas.main.dto.IrregularidadeSeletorDTO;
 import br.com.gbrsistemas.main.dto.ItemAnexoDTO;
 import br.com.gbrsistemas.main.dto.ItemVistoriaDTO;
 import br.com.gbrsistemas.main.dto.LoginDTO;
@@ -82,10 +81,10 @@ public class CfmController {
 		return null;
 	}
 	
-	public List<ItemVistoriaDTO> listaIrregularidades(IrregularidadeSeletorDTO irregularidadeSeletor) throws AccessTokenInvalidoException, JsonProcessingException {
+	public List<ItemVistoriaDTO> listaIrregularidades() throws AccessTokenInvalidoException, JsonProcessingException {
 		this.login();
 		
-		return this.apiController.postIrregularidade(irregularidadeSeletor, accesToken);
+		return this.apiController.postIrregularidade(this.idDemanda, accesToken);
 	}
 
 	public void login() throws JsonProcessingException {	    

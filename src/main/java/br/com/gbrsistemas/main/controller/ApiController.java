@@ -26,7 +26,6 @@ import br.com.gbrsistemas.main.dto.AnexoDTO;
 import br.com.gbrsistemas.main.dto.VistoriaDTO;
 import br.com.gbrsistemas.main.dto.ItemVistoriaDTO;
 import br.com.gbrsistemas.main.dto.AnexoSeletorDTO;
-import br.com.gbrsistemas.main.dto.IrregularidadeSeletorDTO;
 import br.com.gbrsistemas.main.dto.LoginDTO;
 import br.com.gbrsistemas.main.dto.IrregularidadesSeletorDemandasDTO;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaResponseDTO;
@@ -155,10 +154,10 @@ public class ApiController {
         }
 	}
 	
-	public List<ItemVistoriaDTO> postIrregularidade(IrregularidadeSeletorDTO irregularidadSeletor, String token) throws JsonProcessingException {
+	public List<ItemVistoriaDTO> postIrregularidade(Integer idDemanda, String token) throws JsonProcessingException {
         Client client = ClientBuilder.newClient();
         IrregularidadesSeletorDemandasDTO irregularidadeSeletorDemandas = new IrregularidadesSeletorDemandasDTO();
-        irregularidadeSeletorDemandas.setIdDemanda(irregularidadSeletor.getIdDemanda());
+        irregularidadeSeletorDemandas.setIdDemanda(idDemanda);
         
         WebTarget target = client.target(this.api + "/crvirtual-demandas/irregularidade/dto");
 

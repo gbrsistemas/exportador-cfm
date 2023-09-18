@@ -44,8 +44,8 @@ public class CfmService {
     @Path("/irregularidades")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response listaIrregularidades(IrregularidadeSeletorDTO irregularidadeSeletor) throws AccessTokenInvalidoException, JsonProcessingException {
-    	return Response.ok(this.cfmController.listaIrregularidades(irregularidadeSeletor)).build(); 
+    public Response listaIrregularidades() throws AccessTokenInvalidoException, JsonProcessingException {
+    	return Response.ok(this.cfmController.listaIrregularidades()).build(); 
     }
 	
 }
