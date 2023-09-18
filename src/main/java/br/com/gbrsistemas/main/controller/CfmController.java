@@ -84,7 +84,11 @@ public class CfmController {
 	public List<ItemVistoriaDTO> listaIrregularidades() throws AccessTokenInvalidoException, JsonProcessingException {
 		this.login();
 		
-		return this.apiController.postIrregularidade(this.idDemanda, accesToken);
+		if(this.idDemanda != null) {
+			return this.apiController.postIrregularidade(this.idDemanda, accesToken);
+		}
+		
+		return null;
 	}
 
 	public void login() throws JsonProcessingException {	    
