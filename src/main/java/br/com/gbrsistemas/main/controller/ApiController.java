@@ -1,19 +1,16 @@
 package br.com.gbrsistemas.main.controller;
 
 import java.util.List;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-
 import javax.ws.rs.core.Form;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,8 +19,6 @@ import br.com.gbrsistemas.main.dto.VistoriaEfetuadaSeletorRequest;
 import br.com.gbrsistemas.main.dto.ItemAnexo;
 import br.com.gbrsistemas.main.dto.AnexoResponse;
 import br.com.gbrsistemas.main.dto.AnexoSeletorRequest;
-import br.com.gbrsistemas.main.dto.DemandasRequest;
-import br.com.gbrsistemas.main.dto.DemandaResponse;
 import br.com.gbrsistemas.main.dto.LoginRequest;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaResponse;
 import br.com.gbrsistemas.main.util.JsonConverter;
@@ -31,23 +26,19 @@ import br.com.gbrsistemas.main.util.JsonConverter;
 public class ApiController {
 
     private String token;
-
-    @Inject
-    @ConfigProperty(name = "demandas.login")
-    private String API_LOGIN;
+    private String apiLogin;
+    private String api;
     
-    @Inject
-    @ConfigProperty(name = "demandas.api")
-    private String API;
-    
-    public ApiController(String token) {
+    public ApiController(String token, String apiLogin, String api) {
+    	this.apiLogin = apiLogin;
+    	this.api = api;
         this.token = token;
     }
     
     public String postLogin(LoginRequest loginRequest) throws JsonProcessingException {
     	    	
     	Client client = ClientBuilder.newClient();
-    	WebTarget target = client.target(this.API_LOGIN + "/oauth2/token");
+    	WebTarget target = client.target(this.apiLogin + "/oauth2/token");
 
     	Form form = new Form();
     	form.param("username", loginRequest.getLogin());
@@ -79,7 +70,7 @@ public class ApiController {
     	    	
         Client client = ClientBuilder.newClient();
 
-        WebTarget target = client.target(this.API + "/crvirtual-demandas/vistoria/pesquisar-vistorias-efetuadas/");
+        WebTarget target = client.target(this.api + "/crvirtual-demandas/vistoria/pesquisar-vistorias-efetuadas/");
 
         String requestBody = JsonConverter.objectToJson(vistoriaEfetuadaSeletorRequest);
 
@@ -103,7 +94,7 @@ public class ApiController {
     public Response baixarAnexo(Integer id) {
         Client client = ClientBuilder.newClient();
 
-        WebTarget target = client.target(this.API + "/crvirtual-demandas/anexo/baixar/" + id);
+        WebTarget target = client.target(this.api + "/crvirtual-demandas/anexo/baixar/" + id);
 
         Response response = target
                 .request(MediaType.APPLICATION_JSON)
@@ -123,7 +114,7 @@ public class ApiController {
 	public List<ItemAnexo> postAnexo(AnexoSeletorRequest anexoSeletorRequest) throws JsonProcessingException {
         Client client = ClientBuilder.newClient();
 
-        WebTarget target = client.target(this.API + "/crvirtual-demandas/anexo/dto/");
+        WebTarget target = client.target(this.api + "/crvirtual-demandas/anexo/dto/");
 
         String requestBody = JsonConverter.objectToJson(anexoSeletorRequest);
 
@@ -141,34 +132,6 @@ public class ApiController {
                 List<ItemAnexo> anexos = anexoResponse.getItens();
 
                 return anexos;
-            } catch (JsonProcessingException e) {
-                System.err.println("Erro ao processar o JSON de resposta: " + e.getMessage());
-                return null;
-            }
-        } else {
-            System.err.println("Erro na solicitação. Código de resposta: " + response.getStatus());
-            return null;
-        }
-	}
-	
-	public List<DemandaResponse> postDemanda(DemandasRequest demandasRequest) throws JsonProcessingException {
-        Client client = ClientBuilder.newClient();
-
-        WebTarget target = client.target(this.API + "/crvirtual-demandas/demanda/dto");
-
-        String requestBody = JsonConverter.objectToJson(demandasRequest);
-
-        Response response = target
-                .request(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .post(Entity.json(requestBody));
-
-        if (response.getStatus() == 200) {
-            String responseBody = response.readEntity(String.class);
-            
-            try {
-                List<DemandaResponse> demandas = JsonConverter.jsonToList(responseBody, DemandaResponse.class);
-                return demandas;
             } catch (JsonProcessingException e) {
                 System.err.println("Erro ao processar o JSON de resposta: " + e.getMessage());
                 return null;

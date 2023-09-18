@@ -7,6 +7,7 @@ import br.com.gbrsistemas.main.dto.ItemAnexo;
 
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
@@ -34,9 +35,17 @@ public class CfmController {
     @Inject
     @ConfigProperty(name = "cfm.password")
     private String password;
+    
+    @Inject
+    @ConfigProperty(name = "cfm.login")
+    private String apiLogin;
+    
+    @Inject
+    @ConfigProperty(name = "cfm.api")
+    private String api;
 
 	public CfmController () {
-		this.apiController = new ApiController(null);
+		this.apiController = new ApiController(null, this.apiLogin, this.api);
 	}
 	
 	public VistoriaResponse listarVistoria(VistoriaEfetuadaRequest vistoriaEfetuadaRequest) throws JsonProcessingException, AccessTokenInvalidoException {
@@ -89,7 +98,7 @@ public class CfmController {
 		LoginRequest loginRequest = new LoginRequest(this.username, this.password);
 		
 		this.accesToken = this.apiController.postLogin(loginRequest);
-		this.apiController = new ApiController(this.accesToken);
+		this.apiController = new ApiController(this.accesToken, this.apiLogin, this.api);
 	}
 
 }
