@@ -1,5 +1,6 @@
 package br.com.gbrsistemas.main.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -92,5 +93,18 @@ public class CfmController {
 		
 		this.accesToken = this.apiController.postLogin(loginRequest);
 	}
+
+    public void integrarIrregularidades(int idDemanda) {
+        //1º consulta a lista das irregularidades no cfm "listaIrregularidades"
+        //2º envia a lista para o sged 
+        
+    }
+
+    public void integrarAnexos(int idDemanda, Date dataVistoria) {
+        // 1º consulta a lista de anexos
+        // 2º conferir pelo idTipoDocumento e data apenas os que devem ir para o sged: termo de notificação, termo de vistoria e relatório de vistoria, com data igual ou superior à data da vistoria
+        // 3º depois de ter a lista filtrada, chamar api para baixar cada documento "apiController.baixarAnexo" e outra api para enviar ao sged (vou repassar depois)
+        
+    }
 
 }
