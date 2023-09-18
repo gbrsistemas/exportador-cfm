@@ -1,19 +1,42 @@
 package br.com.gbrsistemas.main.dto;
 
+import br.com.gbrsistemas.main.dto.AssinaturaDigitalDTO;
+
+import java.util.List;
+
 public class ItemAnexoDTO {
 	
-	private Integer id;
-	private String s3;
-	private String descricao;
-	private Integer idTipoDocumento;
-	private String data;
-	private String nome;
-	private String extensao;
-	private String nomeResponsavel;
-	private String tipoDocumento;
+    private Integer id;
+    private String s3;
+    private String descricao;
+    private Integer idTipoDocumento;
+    private String data;
+    private String nome;
+    private String extensao;
+    private String nomeResponsavel;
+    private String tipoDocumento;
+    private List<AssinaturaDigitalDTO> assinaturasDigitais;
+    private String assinaturaLabel;
+    private Boolean enviadoFiscalizado;
+    private String enviadoPor;
+    private String dataEnvio;
+    private String emailRecebidoPor;
 	private String roteiro;
-	private Boolean enviadoFiscalizado;
-	
+	private String dataCiencia;
+	private String dataLeitura;
+
+	public String getDataCiencia() {
+		return dataCiencia;
+	}
+	public void setDataCiencia(String dataCiencia) {
+		this.dataCiencia = dataCiencia;
+	}
+	public String getDataLeitura() {
+		return dataLeitura;
+	}
+	public void setDataLeitura(String dataLeitura) {
+		this.dataLeitura = dataLeitura;
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -68,11 +91,41 @@ public class ItemAnexoDTO {
 	public void setTipoDocumento(String tipoDocumento) {
 		this.tipoDocumento = tipoDocumento;
 	}
+	public List<AssinaturaDigitalDTO> getAssinaturasDigitais() {
+		return assinaturasDigitais;
+	}
+	public void setAssinaturasDigitais(List<AssinaturaDigitalDTO> assinaturasDigitais) {
+		this.assinaturasDigitais = assinaturasDigitais;
+	}
+	public String getAssinaturaLabel() {
+		return assinaturaLabel;
+	}
+	public void setAssinaturaLabel(String assinaturaLabel) {
+		this.assinaturaLabel = assinaturaLabel;
+	}
 	public Boolean getEnviadoFiscalizado() {
 		return enviadoFiscalizado;
 	}
 	public void setEnviadoFiscalizado(Boolean enviadoFiscalizado) {
 		this.enviadoFiscalizado = enviadoFiscalizado;
+	}
+	public String getEnviadoPor() {
+		return enviadoPor;
+	}
+	public void setEnviadoPor(String enviadoPor) {
+		this.enviadoPor = enviadoPor;
+	}
+	public String getDataEnvio() {
+		return dataEnvio;
+	}
+	public void setDataEnvio(String dataEnvio) {
+		this.dataEnvio = dataEnvio;
+	}
+	public String getEmailRecebidoPor() {
+		return emailRecebidoPor;
+	}
+	public void setEmailRecebidoPor(String emailRecebidoPor) {
+		this.emailRecebidoPor = emailRecebidoPor;
 	}
 	public String getRoteiro() {
 		return roteiro;

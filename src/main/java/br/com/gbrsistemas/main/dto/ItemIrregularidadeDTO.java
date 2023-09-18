@@ -1,6 +1,6 @@
 package br.com.gbrsistemas.main.dto;
 
-public class ItemVistoriaDTO {
+public class ItemIrregularidadeDTO {
 	
     private Integer id;
     private Integer vistoria;
@@ -25,10 +25,10 @@ public class ItemVistoriaDTO {
     private UltimaMovimentacaoDTO ultimaMovimentacao;
     private String dataAtualizacaoFormatada;
     
-	public ItemVistoriaDTO() {
+	public ItemIrregularidadeDTO() {
 	}
 	
-	public ItemVistoriaDTO(Integer id, Integer vistoria, String grupo, String nome, String descricao,
+	public ItemIrregularidadeDTO(Integer id, Integer vistoria, String grupo, String nome, String descricao,
 			String situacaoIrregularidade, Integer idSituacaoIrregularidade, Boolean origemVistoria,
 			String dataAtualizacao, String prazoLegal, String codigoTablet, String nomeUsuarioTransmissao,
 			Integer idDemanda, Integer numeroDemanda, Integer anoDemanda, String ufDemanda, String respostaQuestao,

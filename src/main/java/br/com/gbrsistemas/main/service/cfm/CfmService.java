@@ -20,7 +20,7 @@ import br.com.gbrsistemas.main.dto.VistoriaEfetuadaDTO;
 import br.com.gbrsistemas.main.util.AccessTokenInvalidoException;
 import br.com.gbrsistemas.main.util.Constants;
 
-@Path("/cfm")
+@Path("/importar")
 @Consumes(Constants.JSON_UTF8)
 @Produces(Constants.JSON_UTF8)
 public class CfmService {
@@ -30,35 +30,34 @@ public class CfmService {
 
 	@POST
     @Path("/vistoria-realizada")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response vistoriaRealizada(VistoriaEfetuadaDTO vistoriaEfetuadaRequest) throws AccessTokenInvalidoException, JsonProcessingException {
     	return Response.ok(this.cfmController.listarVistoria(vistoriaEfetuadaRequest)).build(); 
     }
 	
 	@GET
 	@Path("/integrar-ged/{idDemanda}")
-	public Response integrarGed(@PathParam("idDemanda") int idDemanda, @QueryParam("dataVistoria") Date dataVistoria) {
-	    //1º vai chamar um método para integrar as irregularidades
-	    this.cfmController.integrarIrregularidades(idDemanda);
-	    
-	    //2º vai chamar um método para integrar os anexos
+	public Response integrarGed(@PathParam("idDemanda") Integer idDemanda, @QueryParam("dataVistoria") Date dataVistoria) throws JsonProcessingException, AccessTokenInvalidoException {		
+		this.cfmController.integrarIrregularidades(idDemanda);
 	    this.cfmController.integrarAnexos(idDemanda, dataVistoria);
 	    
 	    return Response.ok().build();
 	}
 	
-	@GET
-    @Path("/anexos")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response baixarAnexo() throws AccessTokenInvalidoException, JsonProcessingException {
-    	return this.cfmController.baixarAnexo();
-    }
-	
-	@POST
-    @Path("/irregularidades")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response listaIrregularidades() throws AccessTokenInvalidoException, JsonProcessingException {
-    	return Response.ok(this.cfmController.listaIrregularidades()).build(); 
-    }
+//	@GET
+//    @Path("/anexos")
+//    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+//    public Response baixarAnexo() throws AccessTokenInvalidoException, JsonProcessingException {
+//    	return this.cfmController.baixarAnexo();
+//    }
+//	
+//	@POST
+//    @Path("/irregularidades")
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response listaIrregularidades() throws AccessTokenInvalidoException, JsonProcessingException {
+//    	return Response.ok(this.cfmController.listaIrregularidades()).build(); 
+//    }
 	
 }

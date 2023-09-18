@@ -23,8 +23,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaSeletorDTO;
 import br.com.gbrsistemas.main.dto.ItemAnexoDTO;
 import br.com.gbrsistemas.main.dto.AnexoDTO;
-import br.com.gbrsistemas.main.dto.VistoriaDTO;
-import br.com.gbrsistemas.main.dto.ItemVistoriaDTO;
+import br.com.gbrsistemas.main.dto.IrregularidadeDTO;
+import br.com.gbrsistemas.main.dto.ItemIrregularidadeDTO;
 import br.com.gbrsistemas.main.dto.AnexoSeletorDTO;
 import br.com.gbrsistemas.main.dto.LoginDTO;
 import br.com.gbrsistemas.main.dto.IrregularidadesSeletorDemandasDTO;
@@ -154,7 +154,7 @@ public class ApiController {
         }
 	}
 	
-	public List<ItemVistoriaDTO> postIrregularidade(Integer idDemanda, String token) throws JsonProcessingException {
+	public List<ItemIrregularidadeDTO> postIrregularidade(Integer idDemanda, String token) throws JsonProcessingException {
         Client client = ClientBuilder.newClient();
         IrregularidadesSeletorDemandasDTO irregularidadeSeletorDemandas = new IrregularidadesSeletorDemandasDTO();
         irregularidadeSeletorDemandas.setIdDemanda(idDemanda);
@@ -171,10 +171,10 @@ public class ApiController {
         if (response.getStatus() == 200) {
             String responseBody = response.readEntity(String.class);
 
-        	VistoriaDTO itemVistoriaDTO = JsonConverter.jsonToObject(responseBody, VistoriaDTO.class);
-            List<ItemVistoriaDTO> anexos = itemVistoriaDTO.getItens();
+        	IrregularidadeDTO irregularidadeDTO = JsonConverter.jsonToObject(responseBody, IrregularidadeDTO.class);
+            List<ItemIrregularidadeDTO> irregularidadeDTOList = irregularidadeDTO.getItens();
             
-            return anexos;
+            return irregularidadeDTOList;
         } else {
             System.err.println("Erro na solicitação. Código de resposta: " + response.getStatus());
             return null;

@@ -1,5 +1,7 @@
 package br.com.gbrsistemas.main.controller;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.com.gbrsistemas.main.dto.AnexoSeletorDTO;
 import br.com.gbrsistemas.main.dto.ItemAnexoDTO;
-import br.com.gbrsistemas.main.dto.ItemVistoriaDTO;
+import br.com.gbrsistemas.main.dto.ItemIrregularidadeDTO;
 import br.com.gbrsistemas.main.dto.LoginDTO;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaDTO;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaResponseDTO;
@@ -63,30 +65,40 @@ public class CfmController {
 		return null;
 	}
 	
-	public Response baixarAnexo() throws AccessTokenInvalidoException, JsonProcessingException {
+	public Response integrarAnexos(Integer idDemanda, Date dataVistoria) throws AccessTokenInvalidoException, JsonProcessingException {
 		this.login();
 		
-		if (this.anoDemanda != null || this.idDemanda != null ) {
+		LocalDateTime dataAnexo = null;
+		
+		if (idDemanda != null && dataVistoria != null ) {
 			AnexoSeletorDTO anexoSeletorRequest = new AnexoSeletorDTO();
-			anexoSeletorRequest.setIdDemanda(this.idDemanda);
+			anexoSeletorRequest.setIdDemanda(idDemanda);
 			
 			List<ItemAnexoDTO> anexoResponse = this.apiController.postAnexo(anexoSeletorRequest, this.accesToken);
 			
+			//Filtra a lista de anexos, removendo os que estão com data que não vão ser utilizadas.
 			if (anexoResponse != null) {
 			    for (ItemAnexoDTO anexo : anexoResponse) {
-			    	return this.apiController.baixarAnexo(anexo.getId(), this.accesToken);
+					dataAnexo = LocalDateTime.parse(anexo.getData());
+					LocalDateTime dataVistoriaLocalDateTime = dataVistoria.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+	                
+	                if(dataAnexo.isBefore(dataVistoriaLocalDateTime)) {
+	                    anexoResponse.remove(anexo);
+	                }
 			    }
 			}
+			
+			//TODO Chamar api do GED para cada anexo da lista.
 		}
 		
 		return null;
 	}
 	
-	public List<ItemVistoriaDTO> listaIrregularidades() throws AccessTokenInvalidoException, JsonProcessingException {
+	public List<ItemIrregularidadeDTO> integrarIrregularidades(Integer idDemanda) throws AccessTokenInvalidoException, JsonProcessingException {
 		this.login();
 		
-		if(this.idDemanda != null) {
-			return this.apiController.postIrregularidade(this.idDemanda, accesToken);
+		if(idDemanda != null) {
+			return this.apiController.postIrregularidade(idDemanda, accesToken);
 		}
 		
 		return null;
@@ -97,18 +109,5 @@ public class CfmController {
 		
 		this.accesToken = this.apiController.postLogin(loginRequest);
 	}
-
-    public void integrarIrregularidades(int idDemanda) {
-        //1º consulta a lista das irregularidades no cfm "listaIrregularidades"
-        //2º envia a lista para o sged 
-        
-    }
-
-    public void integrarAnexos(int idDemanda, Date dataVistoria) {
-        // 1º consulta a lista de anexos
-        // 2º conferir pelo idTipoDocumento e data apenas os que devem ir para o sged: termo de notificação, termo de vistoria e relatório de vistoria, com data igual ou superior à data da vistoria
-        // 3º depois de ter a lista filtrada, chamar api para baixar cada documento "apiController.baixarAnexo" e outra api para enviar ao sged (vou repassar depois)
-        
-    }
 
 }

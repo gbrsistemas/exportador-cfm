@@ -2,21 +2,21 @@ package br.com.gbrsistemas.main.dto;
 
 import java.util.List;
 
-public class VistoriaDTO {
-    private List<ItemVistoriaDTO> itens;
+public class IrregularidadeDTO {
+    private List<ItemIrregularidadeDTO> itens;
     private Integer total;
     
-	public VistoriaDTO() {}
+	public IrregularidadeDTO() {}
     
-	public VistoriaDTO(List<ItemVistoriaDTO> itens, Integer total) {
+	public IrregularidadeDTO(List<ItemIrregularidadeDTO> itens, Integer total) {
 		this.itens = itens;
 		this.total = total;
 	}
 	
-	public List<ItemVistoriaDTO> getItens() {
+	public List<ItemIrregularidadeDTO> getItens() {
 		return itens;
 	}
-	public void setItens(List<ItemVistoriaDTO> itens) {
+	public void setItens(List<ItemIrregularidadeDTO> itens) {
 		this.itens = itens;
 	}
 	public Integer getTotal() {
