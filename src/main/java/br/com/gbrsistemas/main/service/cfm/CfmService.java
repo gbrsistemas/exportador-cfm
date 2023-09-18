@@ -33,11 +33,9 @@ public class CfmService {
 	
 	@GET
     @Path("/anexos")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response baixarAnexo() throws AccessTokenInvalidoException, JsonProcessingException {
-    	return Response.ok(this.cfmController.baixarAnexo()).build(); 
-
+    	return this.cfmController.baixarAnexo();
     }
 	
 }

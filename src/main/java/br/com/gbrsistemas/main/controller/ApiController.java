@@ -14,7 +14,7 @@ import javax.ws.rs.core.Form;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaSeletorRequest;
-import br.com.gbrsistemas.main.dto.AnexoDTO;
+import br.com.gbrsistemas.main.dto.ItemAnexo;
 import br.com.gbrsistemas.main.dto.AnexoResponse;
 import br.com.gbrsistemas.main.dto.AnexoSeletorRequest;
 import br.com.gbrsistemas.main.dto.DemandasRequest;
@@ -89,8 +89,7 @@ public class ApiController {
         }
     }
     
-    public String baixarAnexo(Integer id) {
-    	
+    public Response baixarAnexo(Integer id) {
         Client client = ClientBuilder.newClient();
 
         WebTarget target = client.target(this.API + "/crvirtual-demandas/anexo/baixar/" + id);
@@ -98,19 +97,19 @@ public class ApiController {
         Response response = target
                 .request(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
-                .post(null);
+                .get();
 
         client.close();
         
         if (response.getStatus() == 200) {
-            return response.readEntity(String.class);
+            return response;
         } else {
             System.err.println("Erro na solicitação. Código de resposta: " + response.getStatus());
             return null;
         }
     }
 
-	public List<AnexoDTO> postAnexo(AnexoSeletorRequest anexoSeletorRequest) throws JsonProcessingException {
+	public List<ItemAnexo> postAnexo(AnexoSeletorRequest anexoSeletorRequest) throws JsonProcessingException {
         Client client = ClientBuilder.newClient();
 
         WebTarget target = client.target(this.API + "/crvirtual-demandas/anexo/dto/");
@@ -128,7 +127,7 @@ public class ApiController {
             try {
             	AnexoResponse anexoResponse = JsonConverter.jsonToObject(responseBody, AnexoResponse.class);
 
-                List<AnexoDTO> anexos = anexoResponse.getItens();
+                List<ItemAnexo> anexos = anexoResponse.getItens();
 
                 return anexos;
             } catch (JsonProcessingException e) {

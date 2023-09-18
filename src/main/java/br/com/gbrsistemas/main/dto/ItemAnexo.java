@@ -1,19 +1,17 @@
 package br.com.gbrsistemas.main.dto;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-
-public class AnexoDTO {
+public class ItemAnexo {
 	
 	private Integer id;
 	private String s3;
 	private String descricao;
 	private Integer idTipoDocumento;
-	private Date data;
+	private String data;
 	private String nome;
 	private String extensao;
 	private String nomeResponsavel;
 	private String tipoDocumento;
+	private String roteiro;
 	private Boolean enviadoFiscalizado;
 	
 	public Integer getId() {
@@ -40,10 +38,10 @@ public class AnexoDTO {
 	public void setIdTipoDocumento(Integer idTipoDocumento) {
 		this.idTipoDocumento = idTipoDocumento;
 	}
-	public Date getData() {
+	public String getData() {
 		return data;
 	}
-	public void setData(Date data) {
+	public void setData(String data) {
 		this.data = data;
 	}
 	public String getNome() {
@@ -76,5 +74,10 @@ public class AnexoDTO {
 	public void setEnviadoFiscalizado(Boolean enviadoFiscalizado) {
 		this.enviadoFiscalizado = enviadoFiscalizado;
 	}
-
+	public String getRoteiro() {
+		return roteiro;
+	}
+	public void setRoteiro(String roteiro) {
+		this.roteiro = roteiro;
+	}
 }

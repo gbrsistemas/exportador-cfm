@@ -1,16 +1,17 @@
 package br.com.gbrsistemas.main.dto;
 
 import java.util.List;
+import br.com.gbrsistemas.main.dto.ItemAnexo;
 
 public class AnexoResponse {
 	
-    private List<AnexoDTO> itens;
+    private List<ItemAnexo> itens;
     private Integer total;
     
-	public List<AnexoDTO> getItens() {
+	public List<ItemAnexo> getItens() {
 		return itens;
 	}
-	public void setItens(List<AnexoDTO> itens) {
+	public void setItens(List<ItemAnexo> itens) {
 		this.itens = itens;
 	}
 	public Integer getTotal() {

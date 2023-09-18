@@ -2,13 +2,16 @@ package br.com.gbrsistemas.main.controller;
 
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaSeletorRequest;
 import br.com.gbrsistemas.main.dto.VistoriaResponse;
-import br.com.gbrsistemas.main.dto.AnexoResponse;
 import br.com.gbrsistemas.main.dto.AnexoSeletorRequest;
-import br.com.gbrsistemas.main.dto.AnexoDTO;
+import br.com.gbrsistemas.main.dto.ItemAnexo;
 
 import java.util.List;
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -24,7 +27,15 @@ public class CfmController {
 
 	private Integer idDemanda;
 	private Integer anoDemanda;
-	
+	    
+    @Inject
+    @ConfigProperty(name = "cfm.username")
+    private String username;
+    
+    @Inject
+    @ConfigProperty(name = "cfm.password")
+    private String password;
+
 	public CfmController () {
 		this.apiController = new ApiController(null);
 	}
@@ -52,35 +63,31 @@ public class CfmController {
 		return null;
 	}
 	
-	public List<String> baixarAnexo() throws AccessTokenInvalidoException, JsonProcessingException {
+	public Response baixarAnexo() throws AccessTokenInvalidoException, JsonProcessingException {
 		this.login();
 		
 		this.idDemanda = 500637;
 		this.anoDemanda = 2023;
 		
-		List<String> listaAnexo = new ArrayList<>();
-		
 		if (this.anoDemanda != null || this.idDemanda != null ) {
 			AnexoSeletorRequest anexoSeletorRequest = new AnexoSeletorRequest();
 			anexoSeletorRequest.setIdDemanda(this.idDemanda);
-			//anexoSeletorRequest.setAno(this.anoDemanda);
 			
-			List<AnexoDTO> anexoResponse = this.apiController.postAnexo(anexoSeletorRequest);
+			List<ItemAnexo> anexoResponse = this.apiController.postAnexo(anexoSeletorRequest);
 			
 			if (anexoResponse != null) {
-			    for (AnexoDTO anexo : anexoResponse) {
-			    	listaAnexo.add(this.apiController.baixarAnexo(anexo.getId()));
+			    for (ItemAnexo anexo : anexoResponse) {
+			    	//listaAnexo.add(this.apiController.baixarAnexo(anexo.getId()));
+			    	return this.apiController.baixarAnexo(anexo.getId());
 			    }
 			}
-			
-			return listaAnexo;
 		}
-
+		
 		return null;
 	}
 
 	public void login() throws JsonProcessingException {
-		LoginRequest loginRequest = new LoginRequest("administradorfederal@teste.com.br", "@Cfm123");
+		LoginRequest loginRequest = new LoginRequest(this.username, this.password);
 		
 		this.accesToken = this.apiController.postLogin(loginRequest);
 		this.apiController = new ApiController(this.accesToken);
