@@ -1,11 +1,15 @@
 package br.com.gbrsistemas.main.service.cfm;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -16,7 +20,7 @@ import br.com.gbrsistemas.main.dto.VistoriaEfetuadaDTO;
 import br.com.gbrsistemas.main.util.AccessTokenInvalidoException;
 import br.com.gbrsistemas.main.util.Constants;
 
-@Path("/importar")
+@Path("/cfm")
 @Consumes(Constants.JSON_UTF8)
 @Produces(Constants.JSON_UTF8)
 public class CfmService {
@@ -26,11 +30,21 @@ public class CfmService {
 
 	@POST
     @Path("/vistoria-realizada")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response vistoriaRealizada(VistoriaEfetuadaDTO vistoriaEfetuadaRequest) throws AccessTokenInvalidoException, JsonProcessingException {
     	return Response.ok(this.cfmController.listarVistoria(vistoriaEfetuadaRequest)).build(); 
     }
+	
+	@GET
+	@Path("/integrar-ged/{idDemanda}")
+	public Response integrarGed(@PathParam("idDemanda") int idDemanda, @QueryParam("dataVistoria") Date dataVistoria) {
+	    //1º vai chamar um método para integrar as irregularidades
+	    this.cfmController.integrarIrregularidades(idDemanda);
+	    
+	    //2º vai chamar um método para integrar os anexos
+	    this.cfmController.integrarAnexos(idDemanda, dataVistoria);
+	    
+	    return Response.ok().build();
+	}
 	
 	@GET
     @Path("/anexos")
