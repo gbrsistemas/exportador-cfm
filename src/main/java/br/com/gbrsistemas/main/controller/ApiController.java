@@ -5,12 +5,17 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import javax.ws.rs.core.Form;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,18 +28,17 @@ import br.com.gbrsistemas.main.dto.LoginRequest;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaResponse;
 import br.com.gbrsistemas.main.util.JsonConverter;
 
+@Stateless
 public class ApiController {
-
-    private String token;
+    
+    @Inject
+    @ConfigProperty(name = "cfm.login")
     private String apiLogin;
+    
+    @Inject
+    @ConfigProperty(name = "cfm.api")
     private String api;
-    
-    public ApiController(String token, String apiLogin, String api) {
-    	this.apiLogin = apiLogin;
-    	this.api = api;
-        this.token = token;
-    }
-    
+       
     public String postLogin(LoginRequest loginRequest) throws JsonProcessingException {
     	    	
     	Client client = ClientBuilder.newClient();
@@ -66,32 +70,36 @@ public class ApiController {
         }
     }
 
-    public VistoriaEfetuadaResponse listarVistoria(VistoriaEfetuadaSeletorRequest vistoriaEfetuadaSeletorRequest) throws JsonProcessingException {
+    public VistoriaEfetuadaResponse listarVistoria(VistoriaEfetuadaSeletorRequest vistoriaEfetuadaSeletorRequest, String token) throws JsonProcessingException {
     	    	
-        Client client = ClientBuilder.newClient();
-
-        WebTarget target = client.target(this.api + "/crvirtual-demandas/vistoria/pesquisar-vistorias-efetuadas/");
-
-        String requestBody = JsonConverter.objectToJson(vistoriaEfetuadaSeletorRequest);
-
-        Response response = target
-                .request(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .post(Entity.json(requestBody));
-
-        client.close();
-        
-        if (response.getStatus() == 200) {
-            VistoriaEfetuadaResponse vistoriaResponse = JsonConverter.jsonToObject(response.readEntity(String.class), VistoriaEfetuadaResponse.class);
-            
-            return vistoriaResponse;
-        } else {
-            System.err.println("Erro na solicitação. Código de resposta: " + response.getStatus());
-            return null;
+        Client client = null;
+        try {
+            client = ClientBuilder.newClient();
+    
+            WebTarget target = client.target(this.api + "/crvirtual-demandas/vistoria/pesquisar-vistorias-efetuadas");
+    
+            String requestBody = JsonConverter.objectToJson(vistoriaEfetuadaSeletorRequest);
+    
+            Response response = target
+                    .request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + token)
+                    .post(Entity.json(requestBody));
+                            
+            if (response.getStatus() == 200) {
+                VistoriaEfetuadaResponse vistoriaResponse = JsonConverter.jsonToObject(response.readEntity(String.class), VistoriaEfetuadaResponse.class);
+                
+                return vistoriaResponse;
+            } else {
+                System.err.println("Erro na solicitação. Código de resposta: " + response.getStatus());
+                return null;
+            }
+        } finally {
+            if(client != null)
+                client.close();
         }
     }
     
-    public Response baixarAnexo(Integer id) {
+    public Response baixarAnexo(Integer id, String token) {
         Client client = ClientBuilder.newClient();
 
         WebTarget target = client.target(this.api + "/crvirtual-demandas/anexo/baixar/" + id);
@@ -111,7 +119,7 @@ public class ApiController {
         }
     }
 
-	public List<ItemAnexo> postAnexo(AnexoSeletorRequest anexoSeletorRequest) throws JsonProcessingException {
+	public List<ItemAnexo> postAnexo(AnexoSeletorRequest anexoSeletorRequest, String token) throws JsonProcessingException {
         Client client = ClientBuilder.newClient();
 
         WebTarget target = client.target(this.api + "/crvirtual-demandas/anexo/dto/");
