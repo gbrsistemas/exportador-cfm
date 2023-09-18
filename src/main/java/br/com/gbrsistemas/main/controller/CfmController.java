@@ -44,7 +44,7 @@ public class CfmController {
 		this.login();
 		
 		VistoriaEfetuadaSeletorDTO vistoriaEfetuadaSeletorRequest = new VistoriaEfetuadaSeletorDTO();
-		vistoriaEfetuadaSeletorRequest.setNumeroDemanda(vistoriaEfetuadaRequest.getAnoDemanda());
+		vistoriaEfetuadaSeletorRequest.setNumeroDemanda(vistoriaEfetuadaRequest.getNumeroDemanda());
 		vistoriaEfetuadaSeletorRequest.setAnoDemanda(vistoriaEfetuadaRequest.getAnoDemanda());
 		vistoriaEfetuadaSeletorRequest.setUfDemanda(vistoriaEfetuadaRequest.getUfDemanda());
 		vistoriaEfetuadaSeletorRequest.setDataInicialTransmissao(vistoriaEfetuadaRequest.getDataInicialTransmissao());
@@ -55,8 +55,7 @@ public class CfmController {
 		if(vistoriaEfetuadaResponse != null && vistoriaEfetuadaResponse.getItens() != null && 
 		        !vistoriaEfetuadaResponse.getItens().isEmpty() && vistoriaEfetuadaResponse.getItens().get(0) != null) {
 			this.idDemanda = vistoriaEfetuadaResponse.getItens().get(0).getIdDemanda();
-			this.anoDemanda = vistoriaEfetuadaResponse.getItens().get(0).getAnoDemanda();
-			
+			this.anoDemanda = vistoriaEfetuadaResponse.getItens().get(0).getAnoDemanda();			
 			
 			return vistoriaEfetuadaResponse.getItens().get(0);
 			
