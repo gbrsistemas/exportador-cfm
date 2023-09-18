@@ -6,7 +6,6 @@ import br.com.gbrsistemas.main.dto.AnexoSeletorRequest;
 import br.com.gbrsistemas.main.dto.ItemAnexo;
 
 import java.util.List;
-import java.util.ArrayList;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;

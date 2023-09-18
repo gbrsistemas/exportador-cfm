@@ -3,12 +3,17 @@ package br.com.gbrsistemas.main.controller;
 import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import javax.ws.rs.core.Form;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,17 +31,23 @@ import br.com.gbrsistemas.main.util.JsonConverter;
 public class ApiController {
 
     private String token;
-	private String API;
 
+    @Inject
+    @ConfigProperty(name = "demandas.login")
+    private String API_LOGIN;
+    
+    @Inject
+    @ConfigProperty(name = "demandas.api")
+    private String API;
+    
     public ApiController(String token) {
-		this.API = "https://cfm.crvirtual.online";
         this.token = token;
     }
     
     public String postLogin(LoginRequest loginRequest) throws JsonProcessingException {
     	    	
     	Client client = ClientBuilder.newClient();
-    	WebTarget target = client.target(this.API + "/oauth2/token");
+    	WebTarget target = client.target(this.API_LOGIN + "/oauth2/token");
 
     	Form form = new Form();
     	form.param("username", loginRequest.getLogin());
