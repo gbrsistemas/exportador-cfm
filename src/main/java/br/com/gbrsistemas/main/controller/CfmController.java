@@ -105,7 +105,7 @@ public class CfmController {
 			            InputStream arquivo = response.readEntity(InputStream.class);
 			            
 			            String nomeArquivo = dto.getDescricao() != null ? dto.getDescricao() : dto.getTipoDocumento();
-			            Attachment file = this.getAsAttachment(nomeArquivo, arquivo);
+			            
 			        }
 			    }
 			}
