@@ -1,10 +1,13 @@
 package br.com.gbrsistemas.main.controller;
 
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -71,8 +74,6 @@ public class CfmController {
 	public Response integrarAnexos(Integer idDemanda, Date dataVistoria) throws AccessTokenInvalidoException, JsonProcessingException {
 		this.login();
 		
-		LocalDateTime dataAnexo = null;
-		
 		if (idDemanda != null && dataVistoria != null ) {
 			AnexoSeletorDTO anexoSeletorRequest = new AnexoSeletorDTO();
 			anexoSeletorRequest.setIdDemanda(idDemanda);
@@ -80,18 +81,23 @@ public class CfmController {
 			List<ItemAnexoDTO> anexoResponse = this.apiController.postAnexo(anexoSeletorRequest, this.accesToken);
 			
 			//Filtra a lista de anexos, removendo os que estão com data que não vão ser utilizadas.
-			if (anexoResponse != null) {
-			    for (ItemAnexoDTO anexo : anexoResponse) {
-					dataAnexo = LocalDateTime.parse(anexo.getData());
-					LocalDateTime dataVistoriaLocalDateTime = dataVistoria.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-	                
-	                if(dataAnexo.isBefore(dataVistoriaLocalDateTime)) {
-	                    anexoResponse.remove(anexo);
-	                }
+			if (anexoResponse != null && !anexoResponse.isEmpty()) {
+			    List<String> nomesAceitos = Arrays.asList(ItemAnexoDTO.NOME_RELATORIO_VISTORIA, ItemAnexoDTO.NOME_RELATORIO_VISTORIA_CONSOLIDADO, ItemAnexoDTO.NOME_TERMO_NOTIFICACAO, ItemAnexoDTO.NOME_TERMO_VISTORIA);
+			    List<Integer> idsTiposAceitos = Arrays.asList(ItemAnexoDTO.ID_RELATORIO_VISTORIA, ItemAnexoDTO.ID_RELATORIO_VISTORIA_CONSOLIDADO, ItemAnexoDTO.ID_TERMO_NOTIFICACAO, ItemAnexoDTO.ID_TERMO_VISTORIA);
+			    
+			    anexoResponse = anexoResponse.stream().filter(a -> (a.getNome() != null && nomesAceitos.contains(a.getNome())) || (a.getIdTipoDocumento() != null && idsTiposAceitos.contains(a.getIdTipoDocumento()))).collect(Collectors.toList());
+			    
+			    LocalDateTime dataVistoriaLocalDateTime = dataVistoria.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			    anexoResponse = anexoResponse.stream().filter(a -> a.getData() != null && (LocalDateTime.parse(a.getData()).isAfter(dataVistoriaLocalDateTime) || LocalDateTime.parse(a.getData()).isEqual(dataVistoriaLocalDateTime))).collect(Collectors.toList());
+			    
+			    for(ItemAnexoDTO dto: anexoResponse) {
+			      
+			        Response response = this.apiController.baixarAnexo(dto.getId(), this.accesToken);
+			        if(response.getStatus() == 200) {
+			            InputStream arquivo = response.readEntity(InputStream.class);
+			        }
 			    }
 			}
-			
-			//TODO Chamar api do GED para cada anexo da lista.
 		}
 		
 		return null;

@@ -3,6 +3,16 @@ package br.com.gbrsistemas.main.dto;
 import java.util.List;
 
 public class ItemAnexoDTO {
+    
+    public static final String NOME_TERMO_VISTORIA = "termo-vistoria";
+    public static final String NOME_RELATORIO_VISTORIA = "relatorio-vistoria";
+    public static final String NOME_RELATORIO_VISTORIA_CONSOLIDADO = "relatorio-vistoria-consolidado";
+    public static final String NOME_TERMO_NOTIFICACAO = "pdf-notificacao";
+    
+    public static final int ID_RELATORIO_VISTORIA_CONSOLIDADO = 12;
+    public static final int ID_RELATORIO_VISTORIA = 11;
+    public static final int ID_TERMO_VISTORIA = 10;
+    public static final int ID_TERMO_NOTIFICACAO = 9;
 	
     private Integer id;
     private String s3;
