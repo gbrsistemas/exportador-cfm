@@ -43,7 +43,7 @@ public class CfmService {
 			@QueryParam("anoDemanda") Integer anoDemanda
 			) throws Exception {		
 		
-		//this.cfmController.integrarIrregularidades(idDemanda);
+		this.cfmController.integrarIrregularidades(idDemanda);
 	    this.cfmController.integrarAnexos(idDemanda, dataVistoria, numeroDemanda, anoDemanda);
 	    
 	    return Response.ok().build();
