@@ -2,6 +2,7 @@ package br.com.gbrsistemas.main.controller;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,10 +11,12 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.com.gbrsistemas.main.dto.AnexoSeletorDTO;
+import br.com.gbrsistemas.main.dto.IrregularidadesGedDTO;
 import br.com.gbrsistemas.main.dto.ItemAnexoDTO;
 import br.com.gbrsistemas.main.dto.ItemIrregularidadeDTO;
 import br.com.gbrsistemas.main.dto.LoginDTO;
@@ -22,6 +25,7 @@ import br.com.gbrsistemas.main.dto.VistoriaEfetuadaResponseDTO;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaSeletorDTO;
 import br.com.gbrsistemas.main.dto.VistoriaResponseDTO;
 import br.com.gbrsistemas.main.util.AccessTokenInvalidoException;
+import client.IrregularidadeServiceClient;
 
 @Stateless
 public class CfmController {
@@ -30,9 +34,6 @@ public class CfmController {
 	
 	@Inject
 	private ApiController apiController;
-
-	private Integer idDemanda;
-	private Integer anoDemanda;
 	    
     @Inject
     @ConfigProperty(name = "cfm.username")
@@ -41,6 +42,10 @@ public class CfmController {
     @Inject
     @ConfigProperty(name = "cfm.password")
     private String password;
+    
+    @Inject
+    @RestClient
+    private IrregularidadeServiceClient irregularidadeServiceClient;
 	
 	public VistoriaResponseDTO listarVistoria(VistoriaEfetuadaDTO vistoriaEfetuadaRequest) throws JsonProcessingException, AccessTokenInvalidoException {
 		this.login();
@@ -55,9 +60,7 @@ public class CfmController {
 		VistoriaEfetuadaResponseDTO vistoriaEfetuadaResponse =  this.apiController.listarVistoria(vistoriaEfetuadaSeletorRequest, this.accesToken);
 
 		if(vistoriaEfetuadaResponse != null && vistoriaEfetuadaResponse.getItens() != null && 
-		        !vistoriaEfetuadaResponse.getItens().isEmpty() && vistoriaEfetuadaResponse.getItens().get(0) != null) {
-			this.idDemanda = vistoriaEfetuadaResponse.getItens().get(0).getIdDemanda();
-			this.anoDemanda = vistoriaEfetuadaResponse.getItens().get(0).getAnoDemanda();			
+		        !vistoriaEfetuadaResponse.getItens().isEmpty() && vistoriaEfetuadaResponse.getItens().get(0) != null) {	
 			
 			return vistoriaEfetuadaResponse.getItens().get(0);
 			
@@ -98,7 +101,17 @@ public class CfmController {
 		this.login();
 		
 		if(idDemanda != null) {
-			return this.apiController.postIrregularidade(idDemanda, accesToken);
+		    List<ItemIrregularidadeDTO> lista =  this.apiController.postIrregularidade(idDemanda, accesToken);
+			
+		    List<IrregularidadesGedDTO> listaIntegracao = new ArrayList<>();
+		    
+		    // converter a list para listaIntegracao
+		    
+
+		    this.irregularidadeServiceClient.integracaoGed(listaIntegracao);
+		    
+		    
+		    return lista;
 		}
 		
 		return null;
