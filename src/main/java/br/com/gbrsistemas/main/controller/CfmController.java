@@ -1,6 +1,10 @@
 package br.com.gbrsistemas.main.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -13,10 +17,14 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.base.Strings;
 
 import br.com.gbrsistemas.main.dto.AnexoSeletorDTO;
 import br.com.gbrsistemas.main.dto.IrregularidadesGedDTO;
@@ -71,7 +79,7 @@ public class CfmController {
 		return null;
 	}
 	
-	public Response integrarAnexos(Integer idDemanda, Date dataVistoria) throws AccessTokenInvalidoException, JsonProcessingException {
+	public Response integrarAnexos(Integer idDemanda, Date dataVistoria) throws AccessTokenInvalidoException, JsonProcessingException, UnsupportedEncodingException {
 		this.login();
 		
 		if (idDemanda != null && dataVistoria != null ) {
@@ -95,6 +103,9 @@ public class CfmController {
 			        Response response = this.apiController.baixarAnexo(dto.getId(), this.accesToken);
 			        if(response.getStatus() == 200) {
 			            InputStream arquivo = response.readEntity(InputStream.class);
+			            
+			            String nomeArquivo = dto.getDescricao() != null ? dto.getDescricao() : dto.getTipoDocumento();
+			            Attachment file = this.getAsAttachment(nomeArquivo, arquivo);
 			        }
 			    }
 			}
@@ -102,6 +113,15 @@ public class CfmController {
 		
 		return null;
 	}
+	
+	public Attachment getAsAttachment(String nomeArquivo, InputStream is) throws UnsupportedEncodingException {
+        if (Strings.isNullOrEmpty(FilenameUtils.getExtension(nomeArquivo))) {
+            nomeArquivo += ".pdf";
+        }
+
+        ContentDisposition cd = new ContentDisposition("attachment;filename*=UTF-8''" + URLEncoder.encode(nomeArquivo, StandardCharsets.UTF_8.name()));
+        return new Attachment(nomeArquivo, is, cd);
+    }
 	
 	public List<ItemIrregularidadeDTO> integrarIrregularidades(Integer idDemanda) throws AccessTokenInvalidoException, JsonProcessingException {
 		this.login();
