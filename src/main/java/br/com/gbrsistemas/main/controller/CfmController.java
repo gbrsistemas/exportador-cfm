@@ -104,23 +104,25 @@ public class CfmController {
 		    List<ItemIrregularidadeDTO> lista =  this.apiController.postIrregularidade(idDemanda, accesToken);			
 		    List<IrregularidadesGedDTO> listaIntegracao = new ArrayList<>();
 		    
-		    for (ItemIrregularidadeDTO item : lista) {
-		        IrregularidadesGedDTO irregularidadeGedDTO = new IrregularidadesGedDTO();
-		        irregularidadeGedDTO.setAnoDemanda(item.getAnoDemanda());
-		        irregularidadeGedDTO.setDescricao(item.getDescricao());
-		        irregularidadeGedDTO.setGrupo(item.getGrupo());
-		        irregularidadeGedDTO.setId(item.getId());
-		        irregularidadeGedDTO.setIdSituacaoIrregularidade(item.getIdSituacaoIrregularidade());
-		        irregularidadeGedDTO.setNome(item.getNome());
-		        irregularidadeGedDTO.setNumeroDemanda(item.getNumeroDemanda());
-		        irregularidadeGedDTO.setSituacaoIrregularidade(item.getSituacaoIrregularidade());
-		        irregularidadeGedDTO.setUfDemanda(item.getUfDemanda());
+		    if(!lista.isEmpty() && lista.get(0) != null) {
+			    for (ItemIrregularidadeDTO item : lista) {
+			        IrregularidadesGedDTO irregularidadeGedDTO = new IrregularidadesGedDTO();
+			        irregularidadeGedDTO.setAnoDemanda(item.getAnoDemanda());
+			        irregularidadeGedDTO.setDescricao(item.getDescricao());
+			        irregularidadeGedDTO.setGrupo(item.getGrupo());
+			        irregularidadeGedDTO.setId(item.getId());
+			        irregularidadeGedDTO.setIdSituacaoIrregularidade(item.getIdSituacaoIrregularidade());
+			        irregularidadeGedDTO.setNome(item.getNome());
+			        irregularidadeGedDTO.setNumeroDemanda(item.getNumeroDemanda());
+			        irregularidadeGedDTO.setSituacaoIrregularidade(item.getSituacaoIrregularidade());
+			        irregularidadeGedDTO.setUfDemanda(item.getUfDemanda());
 
-		        listaIntegracao.add(irregularidadeGedDTO);
+			        listaIntegracao.add(irregularidadeGedDTO);
+			    }
+			    
+			    this.irregularidadeServiceClient.integracaoGed(listaIntegracao);
 		    }
 		    
-		    this.irregularidadeServiceClient.integracaoGed(listaIntegracao);
-		   
 		    return lista;
 		}
 		
