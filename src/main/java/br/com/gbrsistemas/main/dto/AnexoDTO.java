@@ -1,7 +1,6 @@
 package br.com.gbrsistemas.main.dto;
 
 import java.util.List;
-import br.com.gbrsistemas.main.dto.ItemAnexoDTO;
 
 public class AnexoDTO {
 	

@@ -1,7 +1,5 @@
 package br.com.gbrsistemas.main.dto;
 
-import br.com.gbrsistemas.main.dto.AssinaturaDigitalDTO;
-
 import java.util.List;
 
 public class ItemAnexoDTO {
