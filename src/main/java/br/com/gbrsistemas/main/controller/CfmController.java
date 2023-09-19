@@ -1,6 +1,6 @@
 package br.com.gbrsistemas.main.controller;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -17,7 +17,11 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -35,8 +39,11 @@ import br.com.gbrsistemas.main.dto.VistoriaEfetuadaDTO;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaResponseDTO;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaSeletorDTO;
 import br.com.gbrsistemas.main.dto.VistoriaResponseDTO;
+import br.com.gbrsistemas.main.dto.AnexoGedDTO;
+
 import br.com.gbrsistemas.main.util.AccessTokenInvalidoException;
 import client.IrregularidadeServiceClient;
+import client.ProcessoFiscalizacaoServiceClient;
 
 @Stateless
 public class CfmController {
@@ -58,6 +65,10 @@ public class CfmController {
     @RestClient
     private IrregularidadeServiceClient irregularidadeServiceClient;
 	
+    @Inject
+    @RestClient
+    private ProcessoFiscalizacaoServiceClient processoFiscalizacaoServiceClient;
+    
 	public VistoriaResponseDTO listarVistoria(VistoriaEfetuadaDTO vistoriaEfetuadaRequest) throws JsonProcessingException, AccessTokenInvalidoException {
 		this.login();
 		
@@ -79,33 +90,45 @@ public class CfmController {
 		return null;
 	}
 	
-	public Response integrarAnexos(Integer idDemanda, Date dataVistoria) throws AccessTokenInvalidoException, JsonProcessingException, UnsupportedEncodingException {
+	public Response integrarAnexos(Integer idDemanda, String dataVistoria, Integer numeroDemanda, Integer anoDemanda) throws AccessTokenInvalidoException, IOException, ParseException {
 		this.login();
 		
-		if (idDemanda != null && dataVistoria != null ) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(dataVistoria);
+        Date dataVistoriaDate = dateFormat.parse(dataVistoria);
+		
+		if (idDemanda != null && dataVistoriaDate != null ) {
 			AnexoSeletorDTO anexoSeletorRequest = new AnexoSeletorDTO();
 			anexoSeletorRequest.setIdDemanda(idDemanda);
 			
 			List<ItemAnexoDTO> anexoResponse = this.apiController.postAnexo(anexoSeletorRequest, this.accesToken);
 			
-			//Filtra a lista de anexos, removendo os que estão com data que não vão ser utilizadas.
 			if (anexoResponse != null && !anexoResponse.isEmpty()) {
 			    List<String> nomesAceitos = Arrays.asList(ItemAnexoDTO.NOME_RELATORIO_VISTORIA, ItemAnexoDTO.NOME_RELATORIO_VISTORIA_CONSOLIDADO, ItemAnexoDTO.NOME_TERMO_NOTIFICACAO, ItemAnexoDTO.NOME_TERMO_VISTORIA);
 			    List<Integer> idsTiposAceitos = Arrays.asList(ItemAnexoDTO.ID_RELATORIO_VISTORIA, ItemAnexoDTO.ID_RELATORIO_VISTORIA_CONSOLIDADO, ItemAnexoDTO.ID_TERMO_NOTIFICACAO, ItemAnexoDTO.ID_TERMO_VISTORIA);
 			    
 			    anexoResponse = anexoResponse.stream().filter(a -> (a.getNome() != null && nomesAceitos.contains(a.getNome())) || (a.getIdTipoDocumento() != null && idsTiposAceitos.contains(a.getIdTipoDocumento()))).collect(Collectors.toList());
 			    
-			    LocalDateTime dataVistoriaLocalDateTime = dataVistoria.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			    LocalDateTime dataVistoriaLocalDateTime = dataVistoriaDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 			    anexoResponse = anexoResponse.stream().filter(a -> a.getData() != null && (LocalDateTime.parse(a.getData()).isAfter(dataVistoriaLocalDateTime) || LocalDateTime.parse(a.getData()).isEqual(dataVistoriaLocalDateTime))).collect(Collectors.toList());
 			    
 			    for(ItemAnexoDTO dto: anexoResponse) {
 			      
 			        Response response = this.apiController.baixarAnexo(dto.getId(), this.accesToken);
+			        
 			        if(response.getStatus() == 200) {
 			            InputStream arquivo = response.readEntity(InputStream.class);
-			            
 			            String nomeArquivo = dto.getDescricao() != null ? dto.getDescricao() : dto.getTipoDocumento();
-			            
+			            byte[] bytes = IOUtils.toByteArray(arquivo);
+
+			            AnexoGedDTO anexoGedDTO = new AnexoGedDTO();
+			            anexoGedDTO.setAnoDemanda(anoDemanda);
+			            anexoGedDTO.setArquivo(bytes);
+			            anexoGedDTO.setCodigoDocumento(dto.getNome());
+			            anexoGedDTO.setIdTipoDocumento(idDemanda);
+			            anexoGedDTO.setNome(nomeArquivo);
+			            anexoGedDTO.setNumeroDemanda(numeroDemanda);
+
+					    this.processoFiscalizacaoServiceClient.inserirDocumento(anexoGedDTO);
 			        }
 			    }
 			}

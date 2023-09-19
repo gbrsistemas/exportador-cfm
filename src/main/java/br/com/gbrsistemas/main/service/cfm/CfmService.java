@@ -1,7 +1,5 @@
 package br.com.gbrsistemas.main.service.cfm;
 
-import java.util.Date;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -38,26 +36,17 @@ public class CfmService {
 	
 	@GET
 	@Path("/integrar-ged/{idDemanda}")
-	public Response integrarGed(@PathParam("idDemanda") Integer idDemanda, @QueryParam("dataVistoria") Date dataVistoria) throws Exception {		
-		this.cfmController.integrarIrregularidades(idDemanda);
-	    this.cfmController.integrarAnexos(idDemanda, dataVistoria);
+	public Response integrarGed(
+			@PathParam("idDemanda") Integer idDemanda, 
+			@QueryParam("dataVistoria") String dataVistoria,
+			@QueryParam("numeroDemanda") Integer numeroDemanda,
+			@QueryParam("anoDemanda") Integer anoDemanda
+			) throws Exception {		
+		
+		//this.cfmController.integrarIrregularidades(idDemanda);
+	    this.cfmController.integrarAnexos(idDemanda, dataVistoria, numeroDemanda, anoDemanda);
 	    
 	    return Response.ok().build();
 	}
-	
-//	@GET
-//    @Path("/anexos")
-//    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-//    public Response baixarAnexo() throws AccessTokenInvalidoException, JsonProcessingException {
-//    	return this.cfmController.baixarAnexo();
-//    }
-//	
-//	@POST
-//    @Path("/irregularidades")
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response listaIrregularidades() throws AccessTokenInvalidoException, JsonProcessingException {
-//    	return Response.ok(this.cfmController.listaIrregularidades()).build(); 
-//    }
 	
 }

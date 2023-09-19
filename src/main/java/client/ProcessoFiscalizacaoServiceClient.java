@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
+import br.com.gbrsistemas.main.dto.AnexoGedDTO;
 import br.com.gbrsistemas.main.util.Constants;
 
 @RegisterClientHeaders
@@ -22,6 +23,6 @@ public interface ProcessoFiscalizacaoServiceClient {
     @POST
     @Produces(Constants.JSON_UTF8)
     @Consumes(Constants.JSON_UTF8)
-    Response inserirDocumento(Object obj);
+    Response inserirDocumento(AnexoGedDTO anexoGedDTO);
 
 }
