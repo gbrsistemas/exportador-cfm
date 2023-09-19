@@ -38,7 +38,7 @@ public class CfmService {
 	
 	@GET
 	@Path("/integrar-ged/{idDemanda}")
-	public Response integrarGed(@PathParam("idDemanda") Integer idDemanda, @QueryParam("dataVistoria") Date dataVistoria) throws JsonProcessingException, AccessTokenInvalidoException {		
+	public Response integrarGed(@PathParam("idDemanda") Integer idDemanda, @QueryParam("dataVistoria") Date dataVistoria) throws Exception {		
 		this.cfmController.integrarIrregularidades(idDemanda);
 	    this.cfmController.integrarAnexos(idDemanda, dataVistoria);
 	    
