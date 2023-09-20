@@ -130,7 +130,8 @@ public class CfmController {
 			            anexoGedDTO.setIdTipoDocumento(idDemanda);
 			            anexoGedDTO.setNome(nomeArquivo);
 			            anexoGedDTO.setNumeroDemanda(integradorGedDTO.getNumeroDemanda());
-
+			            anexoGedDTO.setIdProcesso(integradorGedDTO.getIdProcesso());
+			            
 					    this.processoFiscalizacaoServiceClient.inserirDocumento(anexoGedDTO);
 			        }
 			    }
@@ -149,7 +150,7 @@ public class CfmController {
         return new Attachment(nomeArquivo, is, cd);
     }
 	
-	public List<ItemIrregularidadeDTO> integrarIrregularidades(Integer idDemanda) throws AccessTokenInvalidoException, JsonProcessingException {
+	public List<ItemIrregularidadeDTO> integrarIrregularidades(Integer idDemanda, Integer idProcesso) throws AccessTokenInvalidoException, JsonProcessingException {
 		this.login();
 		
 		if(idDemanda != null) {
@@ -168,7 +169,7 @@ public class CfmController {
 			        irregularidadeGedDTO.setNumeroDemanda(item.getNumeroDemanda());
 			        irregularidadeGedDTO.setSituacaoIrregularidade(item.getSituacaoIrregularidade());
 			        irregularidadeGedDTO.setUfDemanda(item.getUfDemanda());
-
+			        irregularidadeGedDTO.setIdProcesso(idProcesso);
 			        listaIntegracao.add(irregularidadeGedDTO);
 			    }
 			    

@@ -40,8 +40,8 @@ public class CfmService {
 			IntegradorGedDTO integradorGedDTO
 			) throws Exception {		
 		
-		this.cfmController.integrarIrregularidades(idDemanda);
-	    this.cfmController.integrarAnexos(idDemanda,integradorGedDTO);
+		this.cfmController.integrarIrregularidades(idDemanda, integradorGedDTO.getIdProcesso());
+	    this.cfmController.integrarAnexos(idDemanda, integradorGedDTO);
 	    
 	    return Response.ok().build();
 	}

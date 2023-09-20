@@ -3,6 +3,7 @@ package br.com.gbrsistemas.main.dto;
 public class AnexoGedDTO {
 	
 	private Integer idTipoDocumento;
+	private Integer idProcesso;
 	private String codigoDocumento;
 	private String nome;
 	private byte[] arquivo;
@@ -14,15 +15,24 @@ public class AnexoGedDTO {
 	}
 
 	public AnexoGedDTO(Integer idTipoDocumento, String codigoDocumento, String nome, byte[] arquivo,
-			Integer numeroDemanda, Integer anoDemanda) {
+			Integer numeroDemanda, Integer anoDemanda, Integer idProcesso) {
 		this.idTipoDocumento = idTipoDocumento;
 		this.codigoDocumento = codigoDocumento;
 		this.nome = nome;
 		this.arquivo = arquivo;
 		this.numeroDemanda = numeroDemanda;
 		this.anoDemanda = anoDemanda;
+		this.idProcesso = idProcesso;
 	}
 	
+	public Integer getIdProcesso() {
+		return idProcesso;
+	}
+
+	public void setIdProcesso(Integer idProcesso) {
+		this.idProcesso = idProcesso;
+	}
+
 	public Integer getIdTipoDocumento() {
 		return idTipoDocumento;
 	}

@@ -2,20 +2,21 @@ package br.com.gbrsistemas.main.dto;
 
 public class IrregularidadesGedDTO {
 	
-	private Integer id;
-	private Integer idSituacaoIrregularidade;
-	private Integer numeroDemanda;
-	private Integer anoDemanda;
 	private String grupo;
 	private String nome;
 	private String descricao;
 	private String situacaoIrregularidade;
 	private String ufDemanda;
+	private Integer idSituacaoIrregularidade ;
+	private Integer numeroDemanda;
+	private Integer anoDemanda;
+	private Integer id;
+	private Integer idProcesso;
 	
 	public IrregularidadesGedDTO() {}
 
 	public IrregularidadesGedDTO(Integer id, Integer idSituacaoIrregularidade, Integer numeroDemanda, Integer anoDemanda, String grupo, String nome,
-			String descricao, String situacaoIrregularidade, String ufDemanda) {
+			String descricao, String situacaoIrregularidade, String ufDemanda, Integer idProcesso) {
 		this.id = id;
 		this.idSituacaoIrregularidade = idSituacaoIrregularidade;
 		this.numeroDemanda = numeroDemanda;
@@ -25,8 +26,17 @@ public class IrregularidadesGedDTO {
 		this.descricao = descricao;
 		this.situacaoIrregularidade = situacaoIrregularidade;
 		this.ufDemanda = ufDemanda;
+		this.idProcesso = idProcesso;
 	}
 	
+	public Integer getIdProcesso() {
+		return idProcesso;
+	}
+
+	public void setIdProcesso(Integer idProcesso) {
+		this.idProcesso = idProcesso;
+	}
+
 	public Integer getIdSituacaoIrregularidade() {
 		return idSituacaoIrregularidade;
 	}
