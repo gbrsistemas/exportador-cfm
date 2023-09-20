@@ -5,13 +5,13 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import br.com.gbrsistemas.main.dto.AnexoGedDTO;
-import br.com.gbrsistemas.main.util.Constants;
 
 @RegisterClientHeaders
 @Dependent
@@ -21,8 +21,8 @@ public interface ProcessoFiscalizacaoServiceClient {
 
     @Path("/upload")
     @POST
-    @Produces(Constants.JSON_UTF8)
-    @Consumes(Constants.JSON_UTF8)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     Response inserirDocumento(AnexoGedDTO anexoGedDTO);
 
 }
