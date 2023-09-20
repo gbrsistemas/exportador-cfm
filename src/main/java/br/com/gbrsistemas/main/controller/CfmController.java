@@ -3,34 +3,40 @@ package br.com.gbrsistemas.main.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+
 import java.net.URLEncoder;
+
 import java.nio.charset.StandardCharsets;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+
 import javax.ws.rs.core.Response;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
+
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.google.common.base.Strings;
 
 import br.com.gbrsistemas.main.dto.AnexoSeletorDTO;
+import br.com.gbrsistemas.main.dto.IntegradorGedDTO;
 import br.com.gbrsistemas.main.dto.IrregularidadesGedDTO;
 import br.com.gbrsistemas.main.dto.ItemAnexoDTO;
 import br.com.gbrsistemas.main.dto.ItemIrregularidadeDTO;
@@ -40,8 +46,8 @@ import br.com.gbrsistemas.main.dto.VistoriaEfetuadaResponseDTO;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaSeletorDTO;
 import br.com.gbrsistemas.main.dto.VistoriaResponseDTO;
 import br.com.gbrsistemas.main.dto.AnexoGedDTO;
-
 import br.com.gbrsistemas.main.util.AccessTokenInvalidoException;
+
 import client.IrregularidadeServiceClient;
 import client.ProcessoFiscalizacaoServiceClient;
 
@@ -90,13 +96,10 @@ public class CfmController {
 		return null;
 	}
 	
-	public Response integrarAnexos(Integer idDemanda, String dataVistoria, Integer numeroDemanda, Integer anoDemanda) throws AccessTokenInvalidoException, IOException, ParseException {
+	public Response integrarAnexos(Integer idDemanda, IntegradorGedDTO integradorGedDTO) throws AccessTokenInvalidoException, IOException, ParseException {
 		this.login();
 		
-        SimpleDateFormat dateFormat = new SimpleDateFormat(dataVistoria);
-        Date dataVistoriaDate = dateFormat.parse(dataVistoria);
-		
-		if (idDemanda != null && dataVistoriaDate != null ) {
+		if (idDemanda != null && integradorGedDTO.getDataVistoria() != null ) {
 			AnexoSeletorDTO anexoSeletorRequest = new AnexoSeletorDTO();
 			anexoSeletorRequest.setIdDemanda(idDemanda);
 			
@@ -108,7 +111,7 @@ public class CfmController {
 			    
 			    anexoResponse = anexoResponse.stream().filter(a -> (a.getNome() != null && nomesAceitos.contains(a.getNome())) || (a.getIdTipoDocumento() != null && idsTiposAceitos.contains(a.getIdTipoDocumento()))).collect(Collectors.toList());
 			    
-			    LocalDateTime dataVistoriaLocalDateTime = dataVistoriaDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			    LocalDateTime dataVistoriaLocalDateTime = integradorGedDTO.getDataVistoria().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 			    anexoResponse = anexoResponse.stream().filter(a -> a.getData() != null && (LocalDateTime.parse(a.getData()).isAfter(dataVistoriaLocalDateTime) || LocalDateTime.parse(a.getData()).isEqual(dataVistoriaLocalDateTime))).collect(Collectors.toList());
 			    
 			    for(ItemAnexoDTO dto: anexoResponse) {
@@ -121,12 +124,12 @@ public class CfmController {
 			            byte[] bytes = IOUtils.toByteArray(arquivo);
 
 			            AnexoGedDTO anexoGedDTO = new AnexoGedDTO();
-			            anexoGedDTO.setAnoDemanda(anoDemanda);
+			            anexoGedDTO.setAnoDemanda(integradorGedDTO.getAnoDemanda());
 			            anexoGedDTO.setArquivo(bytes);
 			            anexoGedDTO.setCodigoDocumento(dto.getNome());
 			            anexoGedDTO.setIdTipoDocumento(idDemanda);
 			            anexoGedDTO.setNome(nomeArquivo);
-			            anexoGedDTO.setNumeroDemanda(numeroDemanda);
+			            anexoGedDTO.setNumeroDemanda(integradorGedDTO.getNumeroDemanda());
 
 					    this.processoFiscalizacaoServiceClient.inserirDocumento(anexoGedDTO);
 			        }

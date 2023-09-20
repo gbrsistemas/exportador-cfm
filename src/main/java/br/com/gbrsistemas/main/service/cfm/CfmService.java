@@ -2,18 +2,17 @@ package br.com.gbrsistemas.main.service.cfm;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.com.gbrsistemas.main.controller.CfmController;
+import br.com.gbrsistemas.main.dto.IntegradorGedDTO;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaDTO;
 import br.com.gbrsistemas.main.util.AccessTokenInvalidoException;
 import br.com.gbrsistemas.main.util.Constants;
@@ -34,17 +33,15 @@ public class CfmService {
     	return Response.ok(this.cfmController.listarVistoria(vistoriaEfetuadaRequest)).build(); 
     }
 	
-	@GET
+	@POST
 	@Path("/integrar-ged/{idDemanda}")
 	public Response integrarGed(
 			@PathParam("idDemanda") Integer idDemanda, 
-			@QueryParam("dataVistoria") String dataVistoria,
-			@QueryParam("numeroDemanda") Integer numeroDemanda,
-			@QueryParam("anoDemanda") Integer anoDemanda
+			IntegradorGedDTO integradorGedDTO
 			) throws Exception {		
 		
 		this.cfmController.integrarIrregularidades(idDemanda);
-	    this.cfmController.integrarAnexos(idDemanda, dataVistoria, numeroDemanda, anoDemanda);
+	    this.cfmController.integrarAnexos(idDemanda,integradorGedDTO);
 	    
 	    return Response.ok().build();
 	}
