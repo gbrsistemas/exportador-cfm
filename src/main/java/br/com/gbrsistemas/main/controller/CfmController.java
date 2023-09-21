@@ -154,22 +154,8 @@ public class CfmController {
 			}
 			return false;
 		}).collect(Collectors.toList());
-    	
-    	
-        Map<String, List<ItemAnexoDTO>> anexosAgrupados = anexos.stream()
-            .collect(Collectors.groupingBy(ItemAnexoDTO::getNome));
 
-        List<ItemAnexoDTO> anexosFiltrados = new ArrayList<>();
-
-        for (Map.Entry<String, List<ItemAnexoDTO>> entry : anexosAgrupados.entrySet()) {
-            List<ItemAnexoDTO> anexosDoMesmoNome = entry.getValue();
-
-            anexosDoMesmoNome.sort(Comparator.comparing(ItemAnexoDTO::getData).reversed());
-
-            anexosFiltrados.add(anexosDoMesmoNome.get(0));
-        }
-
-        return anexosFiltrados;
+        return anexos;
     }
 
 	public Attachment getAsAttachment(String nomeArquivo, InputStream is) throws UnsupportedEncodingException {
