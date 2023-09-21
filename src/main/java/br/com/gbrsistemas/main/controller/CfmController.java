@@ -100,7 +100,8 @@ public class CfmController {
 	
 	public Response integrarAnexos(Integer idDemanda, IntegradorGedDTO integradorGedDTO) throws AccessTokenInvalidoException, IOException, ParseException {
 		this.login();
-		
+	    LocalDateTime dataVistoriaLocalDateTime = integradorGedDTO.getDataVistoria().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
 		if (idDemanda != null && integradorGedDTO.getDataVistoria() != null ) {
 			AnexoSeletorDTO anexoSeletorRequest = new AnexoSeletorDTO();
 			anexoSeletorRequest.setIdDemanda(idDemanda);
@@ -113,7 +114,7 @@ public class CfmController {
 			    
 			    anexoResponse = anexoResponse.stream().filter(a -> (a.getNome() != null && nomesAceitos.contains(a.getNome())) || (a.getIdTipoDocumento() != null && idsTiposAceitos.contains(a.getIdTipoDocumento()))).collect(Collectors.toList());	   
 	            
-			    LocalDateTime dataVistoriaLocalDateTime = integradorGedDTO.getDataVistoria().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			    //LocalDateTime dataVistoriaLocalDateTime = integradorGedDTO.getDataVistoria().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 	          
 			    anexoResponse = anexoResponse.stream().filter(a -> a.getData() != null && (LocalDateTime.parse(a.getData()).isAfter(dataVistoriaLocalDateTime) || LocalDateTime.parse(a.getData()).isEqual(dataVistoriaLocalDateTime))).collect(Collectors.toList());
 			    
@@ -130,14 +131,13 @@ public class CfmController {
 			            anexoGedDTO.setAnoDemanda(integradorGedDTO.getAnoDemanda());
 			            anexoGedDTO.setArquivo(bytes);
 			            anexoGedDTO.setCodigoDocumento(dto.getNome());
-			            anexoGedDTO.setIdTipoDocumento(idDemanda);
+			            anexoGedDTO.setIdTipoDocumento(dto.getIdTipoDocumento());
 			            anexoGedDTO.setNome(nomeArquivo);
 			            anexoGedDTO.setNumeroDemanda(integradorGedDTO.getNumeroDemanda());
 			            anexoGedDTO.setIdProcesso(integradorGedDTO.getIdProcesso());
 			            
 					    this.processoFiscalizacaoServiceClient.inserirDocumento(anexoGedDTO);
 					    
-					    return response;
 			        }
 			    }
 			}
