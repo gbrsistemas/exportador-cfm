@@ -111,19 +111,11 @@ public class CfmController {
 			    List<String> nomesAceitos = Arrays.asList(ItemAnexoDTO.NOME_RELATORIO_VISTORIA, ItemAnexoDTO.NOME_RELATORIO_VISTORIA_CONSOLIDADO, ItemAnexoDTO.NOME_TERMO_NOTIFICACAO, ItemAnexoDTO.NOME_TERMO_VISTORIA);
 			    List<Integer> idsTiposAceitos = Arrays.asList(ItemAnexoDTO.ID_RELATORIO_VISTORIA, ItemAnexoDTO.ID_RELATORIO_VISTORIA_CONSOLIDADO, ItemAnexoDTO.ID_TERMO_NOTIFICACAO, ItemAnexoDTO.ID_TERMO_VISTORIA);
 			    
-			    anexoResponse = anexoResponse.stream().filter(a -> (a.getNome() != null && nomesAceitos.contains(a.getNome())) || (a.getIdTipoDocumento() != null && idsTiposAceitos.contains(a.getIdTipoDocumento()))).collect(Collectors.toList());
-			    
-			    Date dataVistoriaLocalDateTime = integradorGedDTO.getDataVistoria();
-	            SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+			    anexoResponse = anexoResponse.stream().filter(a -> (a.getNome() != null && nomesAceitos.contains(a.getNome())) || (a.getIdTipoDocumento() != null && idsTiposAceitos.contains(a.getIdTipoDocumento()))).collect(Collectors.toList());	   
+	            
+			    LocalDateTime dataVistoriaLocalDateTime = integradorGedDTO.getDataVistoria().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 	          
-			    anexoResponse = anexoResponse.stream().filter(a -> {
-					try {
-						return a.getData() != null && (formatoData.parse(a.getData()).after(dataVistoriaLocalDateTime)) || formatoData.parse(a.getData()) == dataVistoriaLocalDateTime;
-					} catch (ParseException e) {
-						e.printStackTrace();
-					}
-					return false;
-				}).collect(Collectors.toList());
+			    anexoResponse = anexoResponse.stream().filter(a -> a.getData() != null && (LocalDateTime.parse(a.getData()).isAfter(dataVistoriaLocalDateTime) || LocalDateTime.parse(a.getData()).isEqual(dataVistoriaLocalDateTime))).collect(Collectors.toList());
 			    
 			    for(ItemAnexoDTO dto: anexoResponse) {
 			      
@@ -144,6 +136,8 @@ public class CfmController {
 			            anexoGedDTO.setIdProcesso(integradorGedDTO.getIdProcesso());
 			            
 					    this.processoFiscalizacaoServiceClient.inserirDocumento(anexoGedDTO);
+					    
+					    return response;
 			        }
 			    }
 			}
