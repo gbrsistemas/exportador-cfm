@@ -15,17 +15,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Comparator;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.ws.rs.core.Response;
 
+import java.text.ParseException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -100,7 +98,7 @@ public class CfmController {
 		return null;
 	}
 	
-	public Response integrarAnexos(Integer idDemanda, IntegradorGedDTO integradorGedDTO) throws AccessTokenInvalidoException, IOException {
+	public Response integrarAnexos(Integer idDemanda, IntegradorGedDTO integradorGedDTO) throws AccessTokenInvalidoException, IOException, ParseException {
 		this.login();
 		
 		if (idDemanda != null && integradorGedDTO.getDataVistoria() != null ) {
@@ -108,14 +106,27 @@ public class CfmController {
 			anexoSeletorRequest.setIdDemanda(idDemanda);
 			
 			List<ItemAnexoDTO> anexoResponse = this.apiController.postAnexo(anexoSeletorRequest, this.accesToken);
-			
+
 			if (anexoResponse != null && !anexoResponse.isEmpty()) {
 			    List<String> nomesAceitos = Arrays.asList(ItemAnexoDTO.NOME_RELATORIO_VISTORIA, ItemAnexoDTO.NOME_RELATORIO_VISTORIA_CONSOLIDADO, ItemAnexoDTO.NOME_TERMO_NOTIFICACAO, ItemAnexoDTO.NOME_TERMO_VISTORIA);
-			    List<Integer> idsTiposAceitos = Arrays.asList(ItemAnexoDTO.ID_RELATORIO_VISTORIA, ItemAnexoDTO.ID_RELATORIO_VISTORIA_CONSOLIDADO, ItemAnexoDTO.ID_TERMO_NOTIFICACAO, ItemAnexoDTO.ID_TERMO_VISTORIA);		    
-			    			    
-			    anexoResponse = aplicarFiltrosAnexo(anexoResponse, integradorGedDTO.getDataVistoria(), nomesAceitos, idsTiposAceitos);
-
-			    for(ItemAnexoDTO dto: anexoResponse) {			      
+			    List<Integer> idsTiposAceitos = Arrays.asList(ItemAnexoDTO.ID_RELATORIO_VISTORIA, ItemAnexoDTO.ID_RELATORIO_VISTORIA_CONSOLIDADO, ItemAnexoDTO.ID_TERMO_NOTIFICACAO, ItemAnexoDTO.ID_TERMO_VISTORIA);
+			    
+			    anexoResponse = anexoResponse.stream().filter(a -> (a.getNome() != null && nomesAceitos.contains(a.getNome())) || (a.getIdTipoDocumento() != null && idsTiposAceitos.contains(a.getIdTipoDocumento()))).collect(Collectors.toList());
+			    
+			    Date dataVistoriaLocalDateTime = integradorGedDTO.getDataVistoria();
+	            SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	          
+			    anexoResponse = anexoResponse.stream().filter(a -> {
+					try {
+						return a.getData() != null && (formatoData.parse(a.getData()).after(dataVistoriaLocalDateTime)) || formatoData.parse(a.getData()) == dataVistoriaLocalDateTime;
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					return false;
+				}).collect(Collectors.toList());
+			    
+			    for(ItemAnexoDTO dto: anexoResponse) {
+			      
 			        Response response = this.apiController.baixarAnexo(dto.getId(), this.accesToken);
 			        
 			        if(response.getStatus() == 200) {
@@ -141,23 +152,6 @@ public class CfmController {
 		return null;
 	}
 	
-    public static List<ItemAnexoDTO> aplicarFiltrosAnexo(List<ItemAnexoDTO> anexos, Date dataVistoriaLocalDateTime, List<String> nomesAceitos, List<Integer> idsTiposAceitos) {
-    	anexos = anexos.stream().filter(a -> (a.getNome() != null && nomesAceitos.contains(a.getNome())) || (a.getIdTipoDocumento() != null && idsTiposAceitos.contains(a.getIdTipoDocumento()))).collect(Collectors.toList());
-
-        SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
-    	anexos = anexos.stream().filter(a -> {
-			try {
-				return a.getData() != null && (formatoData.parse(a.getData()).after(dataVistoriaLocalDateTime)) || formatoData.parse(a.getData()) == dataVistoriaLocalDateTime;
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			return false;
-		}).collect(Collectors.toList());
-
-        return anexos;
-    }
-
 	public Attachment getAsAttachment(String nomeArquivo, InputStream is) throws UnsupportedEncodingException {
         if (Strings.isNullOrEmpty(FilenameUtils.getExtension(nomeArquivo))) {
             nomeArquivo += ".pdf";
