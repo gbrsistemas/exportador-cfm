@@ -15,15 +15,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.ws.rs.core.Response;
 
-import java.text.ParseException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -125,6 +126,24 @@ public class CfmController {
 					}
 					return false;
 				}).collect(Collectors.toList());
+			    
+			    anexoResponse = anexoResponse.stream()
+			            .collect(Collectors.toMap(
+			                    ItemAnexoDTO::getNome, 
+			                    anexo -> anexo,         
+			                    (existing, replacement) -> 
+			                    {
+									try {
+										return formatoData.parse(existing.getData()).after(formatoData.parse(replacement.getData())) ? existing : replacement;
+									} catch (ParseException e) {
+										e.printStackTrace();
+									}
+									return existing;
+								}
+			                ))
+			                .values()
+			                .stream()
+			                .collect(Collectors.toList());
 			    
 			    for(ItemAnexoDTO dto: anexoResponse) {
 			      
