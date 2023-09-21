@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Comparator;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -110,43 +111,11 @@ public class CfmController {
 			
 			if (anexoResponse != null && !anexoResponse.isEmpty()) {
 			    List<String> nomesAceitos = Arrays.asList(ItemAnexoDTO.NOME_RELATORIO_VISTORIA, ItemAnexoDTO.NOME_RELATORIO_VISTORIA_CONSOLIDADO, ItemAnexoDTO.NOME_TERMO_NOTIFICACAO, ItemAnexoDTO.NOME_TERMO_VISTORIA);
-			    List<Integer> idsTiposAceitos = Arrays.asList(ItemAnexoDTO.ID_RELATORIO_VISTORIA, ItemAnexoDTO.ID_RELATORIO_VISTORIA_CONSOLIDADO, ItemAnexoDTO.ID_TERMO_NOTIFICACAO, ItemAnexoDTO.ID_TERMO_VISTORIA);
-			    
-			    anexoResponse = anexoResponse.stream().filter(a -> (a.getNome() != null && nomesAceitos.contains(a.getNome())) || (a.getIdTipoDocumento() != null && idsTiposAceitos.contains(a.getIdTipoDocumento()))).collect(Collectors.toList());
-			    
-			    Date dataVistoriaLocalDateTime = integradorGedDTO.getDataVistoria();
-			    
-	            SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-	          
-			    anexoResponse = anexoResponse.stream().filter(a -> {
-					try {
-						return a.getData() != null && (formatoData.parse(a.getData()).after(dataVistoriaLocalDateTime)) || formatoData.parse(a.getData()) == dataVistoriaLocalDateTime;
-					} catch (ParseException e) {
-						e.printStackTrace();
-					}
-					return false;
-				}).collect(Collectors.toList());
-			    
-			    anexoResponse = anexoResponse.stream()
-			            .collect(Collectors.toMap(
-			                    ItemAnexoDTO::getNome, 
-			                    anexo -> anexo,         
-			                    (existing, replacement) -> 
-			                    {
-									try {
-										return formatoData.parse(existing.getData()).after(formatoData.parse(replacement.getData())) ? existing : replacement;
-									} catch (ParseException e) {
-										e.printStackTrace();
-									}
-									return existing;
-								}
-			                ))
-			                .values()
-			                .stream()
-			                .collect(Collectors.toList());
-			    
-			    for(ItemAnexoDTO dto: anexoResponse) {
-			      
+			    List<Integer> idsTiposAceitos = Arrays.asList(ItemAnexoDTO.ID_RELATORIO_VISTORIA, ItemAnexoDTO.ID_RELATORIO_VISTORIA_CONSOLIDADO, ItemAnexoDTO.ID_TERMO_NOTIFICACAO, ItemAnexoDTO.ID_TERMO_VISTORIA);		    
+			    			    
+			    anexoResponse = aplicarFiltrosAnexo(anexoResponse, integradorGedDTO.getDataVistoria(), nomesAceitos, idsTiposAceitos);
+
+			    for(ItemAnexoDTO dto: anexoResponse) {			      
 			        Response response = this.apiController.baixarAnexo(dto.getId(), this.accesToken);
 			        
 			        if(response.getStatus() == 200) {
@@ -172,6 +141,37 @@ public class CfmController {
 		return null;
 	}
 	
+    public static List<ItemAnexoDTO> aplicarFiltrosAnexo(List<ItemAnexoDTO> anexos, Date dataVistoriaLocalDateTime, List<String> nomesAceitos, List<Integer> idsTiposAceitos) {
+    	anexos = anexos.stream().filter(a -> (a.getNome() != null && nomesAceitos.contains(a.getNome())) || (a.getIdTipoDocumento() != null && idsTiposAceitos.contains(a.getIdTipoDocumento()))).collect(Collectors.toList());
+
+        SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+    	anexos = anexos.stream().filter(a -> {
+			try {
+				return a.getData() != null && (formatoData.parse(a.getData()).after(dataVistoriaLocalDateTime)) || formatoData.parse(a.getData()) == dataVistoriaLocalDateTime;
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			return false;
+		}).collect(Collectors.toList());
+    	
+    	
+        Map<String, List<ItemAnexoDTO>> anexosAgrupados = anexos.stream()
+            .collect(Collectors.groupingBy(ItemAnexoDTO::getNome));
+
+        List<ItemAnexoDTO> anexosFiltrados = new ArrayList<>();
+
+        for (Map.Entry<String, List<ItemAnexoDTO>> entry : anexosAgrupados.entrySet()) {
+            List<ItemAnexoDTO> anexosDoMesmoNome = entry.getValue();
+
+            anexosDoMesmoNome.sort(Comparator.comparing(ItemAnexoDTO::getData).reversed());
+
+            anexosFiltrados.add(anexosDoMesmoNome.get(0));
+        }
+
+        return anexosFiltrados;
+    }
+
 	public Attachment getAsAttachment(String nomeArquivo, InputStream is) throws UnsupportedEncodingException {
         if (Strings.isNullOrEmpty(FilenameUtils.getExtension(nomeArquivo))) {
             nomeArquivo += ".pdf";
