@@ -24,6 +24,7 @@ public class ItemIrregularidadeDTO {
     private String nomeDiretor;
     private UltimaMovimentacaoDTO ultimaMovimentacao;
     private String dataAtualizacaoFormatada;
+    private Integer totalAnexos;
     
 	public ItemIrregularidadeDTO() {
 	}
@@ -33,7 +34,7 @@ public class ItemIrregularidadeDTO {
 			String dataAtualizacao, String prazoLegal, String codigoTablet, String nomeUsuarioTransmissao,
 			Integer idDemanda, Integer numeroDemanda, Integer anoDemanda, String ufDemanda, String respostaQuestao,
 			Integer numeroCrm, String nomeDemanda, String nomeDiretor, UltimaMovimentacaoDTO ultimaMovimentacao,
-			String dataAtualizacaoFormatada) {
+			String dataAtualizacaoFormatada, Integer totalAnexos) {
 		this.id = id;
 		this.vistoria = vistoria;
 		this.grupo = grupo;
@@ -56,7 +57,17 @@ public class ItemIrregularidadeDTO {
 		this.nomeDiretor = nomeDiretor;
 		this.ultimaMovimentacao = ultimaMovimentacao;
 		this.dataAtualizacaoFormatada = dataAtualizacaoFormatada;
+		this.totalAnexos = totalAnexos;
 	}
+	
+	public Integer getTotalAnexos() {
+		return totalAnexos;
+	}
+
+	public void setTotalAnexos(Integer totalAnexos) {
+		this.totalAnexos = totalAnexos;
+	}
+
 	public Integer getId() {
 		return id;
 	}
