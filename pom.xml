@@ -230,7 +230,7 @@
 			<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.1.0</version>
                 <configuration>
                     <nonFilteredFileExtensions>
                         <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
@@ -260,8 +260,8 @@
     <repositories>
 		<repository>
 			<id>maven-gbr</id>
-			<name>maven-gbr</name>
-			<url>http://nexus.gbrsistemas.tech/repository/maven-gbr/</url>
+			<name>GBR Mixed</name>
+			<url>https://nexus.gbrsistemas.tech/repository/maven-gbr/</url>
 			<layout>default</layout>
 			<snapshots>
 				<enabled>true</enabled>
@@ -272,7 +272,7 @@
 		<repository>
 			<id>gbr-mixed</id>
 			<name>Nexus GBR</name>
-			<url>http://nexus.gbrsistemas.tech/repository/gbr-mixed/</url>
+			<url>https://nexus.gbrsistemas.tech/repository/gbr-mixed/</url>
 		</repository>
 	</distributionManagement>
 	<scm>
