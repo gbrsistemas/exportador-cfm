@@ -46,7 +46,7 @@ public class ApiController {
     public String postLogin(LoginDTO loginRequest) throws JsonProcessingException {
     	    	
     	Client client = ClientBuilder.newClient();
-    	WebTarget target = client.target(this.apiLogin + "/oauth2/token");
+    	WebTarget target = client.target(this.apiLogin);
 
     	Form form = new Form();
     	form.param("username", loginRequest.getLogin());
