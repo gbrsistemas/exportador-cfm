@@ -3,7 +3,7 @@
              xsi:schemaLocation="http://www.openejb.org/openejb-jar/1.1">
     <pojo-deployment  class-name="jaxrs-application">
         <properties>
-            cxf.jaxrs.providers = br.com.gbrsistemas.projetotemplate.config.providers.JacksonJSONProvider
+            cxf.jaxrs.providers = br.com.gbrsistemas.main.config.providers.JacksonJSONProvider
         </properties>
     </pojo-deployment>
 </openejb-jar>

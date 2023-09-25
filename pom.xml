@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>br.com.gbrsistemas.crvirtual</groupId>
-    <artifactId>crv-template-backend</artifactId>
+    <artifactId>integrador-ged</artifactId>
     <version>0.0.1</version>
     <packaging>war</packaging>
 
@@ -187,6 +187,23 @@
             <version>0.9.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt-api</artifactId>
+		    <version>0.11.2</version> <!-- Verifique a versão mais recente no repositório Maven -->
+		</dependency>
+		<dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt-impl</artifactId>
+		    <version>0.11.2</version> <!-- Verifique a versão mais recente no repositório Maven -->
+		    <scope>runtime</scope>
+		</dependency>
+		<dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt-jackson</artifactId>
+		    <version>0.11.2</version> <!-- Verifique a versão mais recente no repositório Maven -->
+		    <scope>runtime</scope>
+		</dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -254,9 +271,9 @@
         </repository>
     </distributionManagement>
     <scm>
-        <connection>scm:git:https://github.com/gbrsistemas/crv-template-backend.git</connection>
-        <url>http://github.com/gbrsistemas/crv-template-backend</url>
-        <developerConnection>scm:git:https://github.com/gbrsistemas/crv-template-backend.git</developerConnection>
+        <connection>scm:git:https://github.com/gbrsistemas/exportador-cfm.git</connection>
+        <url>http://github.com/gbrsistemas/exportador-cfm</url>
+        <developerConnection>scm:git:https://github.com/gbrsistemas/exportador-cfm.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 </project>
