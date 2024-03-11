@@ -2,6 +2,9 @@ package br.com.gbrsistemas.main.dto;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AssinaturaDigitalDTO {
 	
     private Integer id;

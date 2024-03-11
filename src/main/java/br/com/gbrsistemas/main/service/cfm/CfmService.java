@@ -29,7 +29,7 @@ public class CfmService {
     @Path("/vistoria-realizada")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response vistoriaRealizada(VistoriaEfetuadaDTO vistoriaEfetuadaRequest) throws AccessTokenInvalidoException, JsonProcessingException {
+    public Response vistoriaRealizada(VistoriaEfetuadaDTO vistoriaEfetuadaRequest) throws Exception {
     	return Response.ok(this.cfmController.listarVistoria(vistoriaEfetuadaRequest)).build(); 
     }
 	
