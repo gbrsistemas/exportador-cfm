@@ -2,6 +2,9 @@ package br.com.gbrsistemas.main.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class IrregularidadeDTO {
     private List<ItemIrregularidadeDTO> itens;
     private Integer total;

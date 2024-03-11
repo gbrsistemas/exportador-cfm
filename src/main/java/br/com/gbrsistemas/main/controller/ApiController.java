@@ -123,7 +123,7 @@ public class ApiController {
         }
     }
 
-	public List<ItemAnexoDTO> postAnexo(AnexoSeletorDTO anexoSeletorRequest, String token) throws JsonProcessingException {
+	public List<ItemAnexoDTO> postAnexo(AnexoSeletorDTO anexoSeletorRequest, String token) throws Exception {
         Client client = ClientBuilder.newClient();
 
         WebTarget target = client.target(this.api + "/crvirtual-demandas/anexo/dto/");
@@ -146,15 +146,15 @@ public class ApiController {
                 return anexos;
             } catch (JsonProcessingException e) {
                 System.err.println("Erro ao processar o JSON de resposta: " + e.getMessage());
-                return null;
+                throw new Exception(String.format("Erro ao consultar anexos do CFM (mensagem: %s)", e.getMessage()));
             }
         } else {
             System.err.println("Erro na solicitação. Código de resposta: " + response.getStatus());
-            return null;
+            throw new Exception(String.format("Erro ao consultar anexos do CFM (status: %s)", response.getStatus()));
         }
 	}
 	
-	public List<ItemIrregularidadeDTO> postIrregularidade(Integer idDemanda, String token) throws JsonProcessingException {
+	public List<ItemIrregularidadeDTO> postIrregularidade(Integer idDemanda, String token) throws Exception {
         Client client = ClientBuilder.newClient();
         IrregularidadesSeletorDemandasDTO irregularidadeSeletorDemandas = new IrregularidadesSeletorDemandasDTO();
         irregularidadeSeletorDemandas.setIdDemanda(idDemanda);
@@ -177,7 +177,7 @@ public class ApiController {
             return irregularidadeDTOList;
         } else {
             System.err.println("Erro na solicitação. Código de resposta: " + response.getStatus());
-            return null;
+            throw new Exception(String.format("Erro ao consultar irregularidades do CFM (status: %s)", response.getStatus()));
         }
 	}
 }

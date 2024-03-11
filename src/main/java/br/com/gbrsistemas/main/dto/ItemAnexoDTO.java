@@ -2,6 +2,9 @@ package br.com.gbrsistemas.main.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ItemAnexoDTO {
     
     public static final String NOME_TERMO_VISTORIA = "termo-vistoria";
