@@ -1,11 +1,9 @@
 package br.com.gbrsistemas.main.controller;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -25,9 +23,9 @@ import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Strings;
 
+import br.com.gbrsistemas.crvirtual.util.exception.ClientExceptionHelper;
 import br.com.gbrsistemas.main.dto.AnexoGedDTO;
 import br.com.gbrsistemas.main.dto.AnexoSeletorDTO;
 import br.com.gbrsistemas.main.dto.IntegradorGedDTO;
@@ -39,7 +37,6 @@ import br.com.gbrsistemas.main.dto.VistoriaEfetuadaDTO;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaResponseDTO;
 import br.com.gbrsistemas.main.dto.VistoriaEfetuadaSeletorDTO;
 import br.com.gbrsistemas.main.dto.VistoriaResponseDTO;
-import br.com.gbrsistemas.main.util.AccessTokenInvalidoException;
 import client.IrregularidadeServiceClient;
 import client.ProcessoFiscalizacaoServiceClient;
 
@@ -67,7 +64,7 @@ public class CfmController {
     @RestClient
     private ProcessoFiscalizacaoServiceClient processoFiscalizacaoServiceClient;
     
-	public VistoriaResponseDTO listarVistoria(VistoriaEfetuadaDTO vistoriaEfetuadaRequest) throws JsonProcessingException, AccessTokenInvalidoException {
+	public VistoriaResponseDTO listarVistoria(VistoriaEfetuadaDTO vistoriaEfetuadaRequest) throws Exception {
 		this.login();
 		
 		VistoriaEfetuadaSeletorDTO vistoriaEfetuadaSeletorRequest = new VistoriaEfetuadaSeletorDTO();
@@ -88,7 +85,7 @@ public class CfmController {
 		return null;
 	}
 	
-	public void integrarAnexos(Integer idDemanda, IntegradorGedDTO integradorGedDTO) throws AccessTokenInvalidoException, IOException, ParseException {
+	public void integrarAnexos(Integer idDemanda, IntegradorGedDTO integradorGedDTO) throws Exception {
 		this.login();
 	    LocalDateTime dataVistoriaLocalDateTime = integradorGedDTO.getDataVistoria().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
@@ -96,7 +93,12 @@ public class CfmController {
 			AnexoSeletorDTO anexoSeletorRequest = new AnexoSeletorDTO();
 			anexoSeletorRequest.setIdDemanda(idDemanda);
 			
-			List<ItemAnexoDTO> anexoResponse = this.apiController.postAnexo(anexoSeletorRequest, this.accesToken);
+			List<ItemAnexoDTO> anexoResponse = null;
+			try {
+			    anexoResponse = this.apiController.postAnexo(anexoSeletorRequest, this.accesToken);
+			} catch (Exception e) {
+	            ClientExceptionHelper.handleException(e);
+	        }
 
 			if (anexoResponse != null && !anexoResponse.isEmpty()) {
 			    List<String> nomesAceitos = Arrays.asList(ItemAnexoDTO.NOME_RELATORIO_VISTORIA, ItemAnexoDTO.NOME_RELATORIO_VISTORIA_CONSOLIDADO, ItemAnexoDTO.NOME_TERMO_NOTIFICACAO, ItemAnexoDTO.NOME_TERMO_VISTORIA);
@@ -106,7 +108,7 @@ public class CfmController {
 	            	          
 			    anexoResponse = anexoResponse.stream().filter(a -> a.getData() != null && (LocalDateTime.parse(a.getData()).isAfter(dataVistoriaLocalDateTime) || LocalDateTime.parse(a.getData()).isEqual(dataVistoriaLocalDateTime))).collect(Collectors.toList());
 
-			    // ordena pra ficar or mais recentes primeiro
+			    // ordena pra ficar os mais recentes primeiro
 			    anexoResponse = anexoResponse.stream().sorted(Comparator.comparingInt(ItemAnexoDTO::getId).reversed()).collect(Collectors.toList());
 			    List<ItemAnexoDTO> listaParaEnvio = new ArrayList<>();
 			    // pegar apenas 1 de cada, refaz a lista para envio lista
@@ -118,10 +120,14 @@ public class CfmController {
 			    
 			    if(listaParaEnvio != null && !listaParaEnvio.isEmpty()) {
     			    for(ItemAnexoDTO dto: listaParaEnvio) {
-    			      
-    			        Response response = this.apiController.baixarAnexo(dto.getId(), this.accesToken);
+    			        Response response = null;
+    			        try {
+    			            response = this.apiController.baixarAnexo(dto.getId(), this.accesToken);
+    			        } catch (Exception e) {
+    		                ClientExceptionHelper.handleException(e);
+    		            }
     			        
-    			        if(response.getStatus() == 200) {
+    			        if(response != null && response.getStatus() == 200) {
     			            InputStream arquivo = response.readEntity(InputStream.class);
     			            String nomeArquivo = dto.getDescricao() != null ? dto.getDescricao() : dto.getTipoDocumento();
     			            byte[] bytes = IOUtils.toByteArray(arquivo);
@@ -135,7 +141,11 @@ public class CfmController {
     			            anexoGedDTO.setNumeroDemanda(integradorGedDTO.getNumeroDemanda());
     			            anexoGedDTO.setIdProcesso(integradorGedDTO.getIdProcesso());
     			            
-    					    this.processoFiscalizacaoServiceClient.inserirDocumento(anexoGedDTO);
+    			            try {
+    			                this.processoFiscalizacaoServiceClient.inserirDocumento(anexoGedDTO);    					    
+        			        } catch (Exception e) {
+                                ClientExceptionHelper.handleException(e);
+                            }
     			        }
     			    }
 			    }
@@ -153,14 +163,20 @@ public class CfmController {
         return new Attachment(nomeArquivo, is, cd);
     }
 	
-	public List<ItemIrregularidadeDTO> integrarIrregularidades(Integer idDemanda, Integer idProcesso) throws AccessTokenInvalidoException, JsonProcessingException {
+	public List<ItemIrregularidadeDTO> integrarIrregularidades(Integer idDemanda, Integer idProcesso) throws Exception {
 		this.login();
 		
 		if(idDemanda != null) {
-		    List<ItemIrregularidadeDTO> lista =  this.apiController.postIrregularidade(idDemanda, accesToken);			
+		    List<ItemIrregularidadeDTO> lista =  null;
+		    try {
+		        lista =  this.apiController.postIrregularidade(idDemanda, accesToken);
+    		} catch (Exception e) {
+                ClientExceptionHelper.handleException(e);
+            }
+		    
 		    List<IrregularidadesGedDTO> listaIntegracao = new ArrayList<>();
 		    
-		    if(!lista.isEmpty() && lista.get(0) != null) {
+		    if(lista != null && !lista.isEmpty() && lista.get(0) != null) {
 			    for (ItemIrregularidadeDTO item : lista) {
 			        IrregularidadesGedDTO irregularidadeGedDTO = new IrregularidadesGedDTO();
 			        irregularidadeGedDTO.setAnoDemanda(item.getAnoDemanda());
@@ -176,7 +192,11 @@ public class CfmController {
 			        listaIntegracao.add(irregularidadeGedDTO);
 			    }
 			    
-			    this.irregularidadeServiceClient.integracaoGed(listaIntegracao);
+			    try {
+			        this.irregularidadeServiceClient.integracaoGed(listaIntegracao);
+			    } catch (Exception e) {
+		            ClientExceptionHelper.handleException(e);
+		        }
 		    }
 		    
 		    return lista;
@@ -185,10 +205,14 @@ public class CfmController {
 		return null;
 	}
 
-	public void login() throws JsonProcessingException {	    
+	public void login() throws Exception {	    
 		LoginDTO loginRequest = new LoginDTO(this.username, this.password);
 		
-		this.accesToken = this.apiController.postLogin(loginRequest);
+		try {
+		    this.accesToken = this.apiController.postLogin(loginRequest);
+		} catch (Exception e) {
+            ClientExceptionHelper.handleException(e);
+        }
 	}
 
 }
