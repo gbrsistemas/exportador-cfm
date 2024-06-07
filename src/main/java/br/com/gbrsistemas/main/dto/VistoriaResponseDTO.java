@@ -1,5 +1,8 @@
 package br.com.gbrsistemas.main.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class VistoriaResponseDTO {
 	private Integer id;
 	private Integer idDemanda;
@@ -14,6 +17,7 @@ public class VistoriaResponseDTO {
 	private String nomeMunicipio;
 	private String nome;
 	private String roteiro;
+	private Integer idUsuarioTransmissao;
 	
 	public VistoriaResponseDTO() {}
 	
@@ -113,5 +117,13 @@ public class VistoriaResponseDTO {
 	public void setRoteiro(String roteiro) {
 		this.roteiro = roteiro;
 	}
-	
+
+    public Integer getIdUsuarioTransmissao() {
+        return idUsuarioTransmissao;
+    }
+
+    public void setIdUsuarioTransmissao(Integer idUsuarioTransmissao) {
+        this.idUsuarioTransmissao = idUsuarioTransmissao;
+    }
+    
 }
